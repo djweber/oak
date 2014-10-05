@@ -1,0 +1,138 @@
+*
+    box-sizing border-box
+body
+    margin 0
+    background #eee
+
+
+div.container
+    font-family 'Roboto Slab', serif
+    max-width 980px
+    min-width 412px
+    padding 0px 40px
+    margin 0px auto
+
+    button.addRoot
+        width 100px
+        height 50px
+        border none
+        color #eee
+        font-family 'Roboto Slab', serif
+        font-size 1.1em
+        background #4BBF62
+        margin 20px 0px;
+
+    div#tree
+        -webkit-touch-callout none
+        -webkit-user-select none
+        -khtml-user-select none
+        -moz-user-select none
+        -ms-user-select none
+        user-select none
+        cursor pointer
+    div.root
+        position relative
+        min-height 60px
+        background #eee
+        color #eee
+        >div.front
+            height 60px
+            background #1f8fdb
+            width 100%
+            &.editing
+                background #EDBB2F
+                color #404040
+                transition all 0.2s linear
+            > .root.ctrl
+                padding 0 15px
+                position absolute
+                right 0
+                background transparent
+                display inline-block
+                opacity 0
+                vertical-align middle
+                line-height 60px
+                button.ctrl
+                    cursor pointer
+                    width 60px
+                    height 60px
+                    line-heght 0px
+                    outline none
+                    text-align center
+                    margin 0 5px
+                    color #52A2D9
+                    background transparent
+                    border none;
+                    //border-radius 32px
+                    font-size 1.8em
+                button.delete:hover
+                    color #DE4040
+                    border-color #DE4040
+                    transition all 0.2s linear
+                button.edit:hover
+                    color #EDBB2F
+                    border-color #EDBB2F
+                    transition all 0.2s linear
+                button.add:hover
+                    color #4BBF62
+                    border-color #4BBF62
+                    transition all 0.2s linear
+                button.modify
+                    min-width 60px
+                    height 40px
+                    color #eee
+                    line-height 0px
+                    border-radius 0
+                    border none
+                    font-size 1.1em
+                    font-family 'Roboto Slab', serif
+                    margin 5px
+                    padding 5px
+                    &.save
+                        background #4BBF62
+                    &.cancel
+                        background #DE4040
+                    i
+                        margin 0
+        div.root.front:hover .ctrl, div.root.front.editing .ctrl
+            opacity 1.0
+        div.root.front.editing span
+            border-bottom 2px dashed #404040
+        &>i
+            position relative
+            left 40px
+        span.label
+            position relative
+            left 4px
+            display inline-block
+        span.root.label
+            margin-top 14px
+            font-size 1.4em
+            margin-left 40px
+        div.parent
+            line-height 40px
+            position relative
+            background #ccc
+            i
+                color #505050
+                position relative
+                left 70px
+            span.parent.label
+                color #505050
+                font-size 1.2em
+                margin-left 70px
+                line-height 40px
+            div.child
+                position relative
+                line-height 30px
+                background #ddd
+                border-bottom 1px solid #C7C7C7
+                height 30px
+                span.child.label
+                    color #505050
+                    font-size 1.0em
+                    margin-left 90px
+                    line-height 30px
+
+i
+    margin-right 4px

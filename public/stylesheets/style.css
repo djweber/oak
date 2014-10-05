@@ -1,0 +1,161 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #eee;
+}
+div.container {
+  font-family: 'Roboto Slab', serif;
+  max-width: 980px;
+  min-width: 412px;
+  padding: 0px 40px;
+  margin: 0px auto;
+}
+div.container button.addRoot {
+  width: 100px;
+  height: 50px;
+  border: none;
+  color: #eee;
+  font-family: 'Roboto Slab', serif;
+  font-size: 1.1em;
+  background: #4bbf62;
+  margin: 20px 0px;
+}
+div.container div#tree {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+div.container div.root {
+  position: relative;
+  min-height: 60px;
+  background: #eee;
+  color: #eee;
+}
+div.container div.root >div.front {
+  height: 60px;
+  background: #1f8fdb;
+  width: 100%;
+}
+div.container div.root >div.front.editing {
+  background: #edbb2f;
+  color: #404040;
+  transition: all 0.2s linear;
+}
+div.container div.root >div.front > .root.ctrl {
+  padding: 0 15px;
+  position: absolute;
+  right: 0;
+  background: transparent;
+  display: inline-block;
+  opacity: 0;
+  vertical-align: middle;
+  line-height: 60px;
+}
+div.container div.root >div.front > .root.ctrl button.ctrl {
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  line-heght: 0px;
+  outline: none;
+  text-align: center;
+  margin: 0 5px;
+  color: #52a2d9;
+  background: transparent;
+  border: none;
+  font-size: 1.8em;
+}
+div.container div.root >div.front > .root.ctrl button.delete:hover {
+  color: #de4040;
+  border-color: #de4040;
+  transition: all 0.2s linear;
+}
+div.container div.root >div.front > .root.ctrl button.edit:hover {
+  color: #edbb2f;
+  border-color: #edbb2f;
+  transition: all 0.2s linear;
+}
+div.container div.root >div.front > .root.ctrl button.add:hover {
+  color: #4bbf62;
+  border-color: #4bbf62;
+  transition: all 0.2s linear;
+}
+div.container div.root >div.front > .root.ctrl button.modify {
+  min-width: 60px;
+  height: 40px;
+  color: #eee;
+  line-height: 0px;
+  border-radius: 0;
+  border: none;
+  font-size: 1.1em;
+  font-family: 'Roboto Slab', serif;
+  margin: 5px;
+  padding: 5px;
+}
+div.container div.root >div.front > .root.ctrl button.modify.save {
+  background: #4bbf62;
+}
+div.container div.root >div.front > .root.ctrl button.modify.cancel {
+  background: #de4040;
+}
+div.container div.root >div.front > .root.ctrl button.modify i {
+  margin: 0;
+}
+div.container div.root div.root.front:hover .ctrl,
+div.container div.root div.root.front.editing .ctrl {
+  opacity: 1;
+}
+div.container div.root div.root.front.editing span {
+  border-bottom: 2px dashed #404040;
+}
+div.container div.root>i {
+  position: relative;
+  left: 40px;
+}
+div.container div.root span.label {
+  position: relative;
+  left: 4px;
+  display: inline-block;
+}
+div.container div.root span.root.label {
+  margin-top: 14px;
+  font-size: 1.4em;
+  margin-left: 40px;
+}
+div.container div.root div.parent {
+  line-height: 40px;
+  position: relative;
+  background: #ccc;
+}
+div.container div.root div.parent i {
+  color: #505050;
+  position: relative;
+  left: 70px;
+}
+div.container div.root div.parent span.parent.label {
+  color: #505050;
+  font-size: 1.2em;
+  margin-left: 70px;
+  line-height: 40px;
+}
+div.container div.root div.parent div.child {
+  position: relative;
+  line-height: 30px;
+  background: #ddd;
+  border-bottom: 1px solid #c7c7c7;
+  height: 30px;
+}
+div.container div.root div.parent div.child span.child.label {
+  color: #505050;
+  font-size: 1em;
+  margin-left: 90px;
+  line-height: 30px;
+}
+i {
+  margin-right: 4px;
+}
