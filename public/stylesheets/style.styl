@@ -100,16 +100,16 @@ div.container
         div.root.front:hover .ctrl, div.root.front.editing .ctrl,
         div.factory.front:hover .ctrl, div.factory.front.editing .ctrl
             opacity 1.0
-        div.root.front.editing span,
-        div.factory.front.editing span
-            border-bottom 2px dashed #404040
+        div.root.front.editing span.input,
+        div.factory.front.editing span.input
+            border-bottom 2px solid #404040
         &>i
             position relative
             left 40px
         span.label
             position relative
             left 4px
-            display inline-block
+            line-height 60px
         span.root.label
             margin-top 14px
             font-size 1.4em
@@ -118,6 +118,15 @@ div.container
             line-height 60px
             position relative
             background #ccc
+            font-size 1.0em
+            color #505050
+            span.factory.bounds
+                font-size 1.2em
+                margin-left 20px
+                span.input.lowerBound
+                    padding 0 2px
+                span.input.upperBound
+                    padding 0 2px
             i.toggle
                 left 70px
             i.ctrl, i.toggle

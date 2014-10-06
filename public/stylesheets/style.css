@@ -145,9 +145,9 @@ div.container div.root div.factory.front:hover .ctrl,
 div.container div.root div.factory.front.editing .ctrl {
   opacity: 1;
 }
-div.container div.root div.root.front.editing span,
-div.container div.root div.factory.front.editing span {
-  border-bottom: 2px dashed #404040;
+div.container div.root div.root.front.editing span.input,
+div.container div.root div.factory.front.editing span.input {
+  border-bottom: 2px solid #404040;
 }
 div.container div.root>i {
   position: relative;
@@ -156,7 +156,7 @@ div.container div.root>i {
 div.container div.root span.label {
   position: relative;
   left: 4px;
-  display: inline-block;
+  line-height: 60px;
 }
 div.container div.root span.root.label {
   margin-top: 14px;
@@ -167,6 +167,18 @@ div.container div.root div.factory {
   line-height: 60px;
   position: relative;
   background: #ccc;
+  font-size: 1em;
+  color: #505050;
+}
+div.container div.root div.factory span.factory.bounds {
+  font-size: 1.2em;
+  margin-left: 20px;
+}
+div.container div.root div.factory span.factory.bounds span.input.lowerBound {
+  padding: 0 2px;
+}
+div.container div.root div.factory span.factory.bounds span.input.upperBound {
+  padding: 0 2px;
 }
 div.container div.root div.factory i.toggle {
   left: 70px;

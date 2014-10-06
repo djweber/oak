@@ -39,7 +39,25 @@ function bindEvents() {
         {
             finishedEditing(target.closest('div.front'), false);
         }
+
         return false;
+    });
+
+    $(document).on('keydown', 'span[contenteditable="true"]' ,function(e){
+
+        /* No line breaks */
+        if(e.which == 13) {
+            console.log("Key pressed");
+            return false;
+        }
+
+        /* We only want bound numbers to be entered, not characters */
+        if( $(e.target).is('span.input.bound') ) {
+            var unicode= e.keyCode? e.keyCode : e.charCode;
+            if( !(unicode >= 48 && unicode <= 57) ) {
+                return false;
+            }
+        }
     });
 
     /* UI Toggle Effects */
@@ -74,7 +92,6 @@ function getNode(id, theData) {
     var index = null;
     var node = null;
     var context = null;
-    console.log("Nodes");
 
     (function recurse(id, d) {
         /* Recursively search for node in tree */
@@ -233,8 +250,7 @@ function deleteNode(id) {
    when a deletion socket event is received */
 function removeNodeFromData(id) {
     var node = getNode(id, data);
-    console.log(node[2].splice(node[1], 1));
-    console.log(data);
+    node[2].splice(node[1], 1);
     comp.setState({data: data});
 }
 

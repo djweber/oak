@@ -27,6 +27,10 @@ var Factory = React.createClass({
 	    		<div className="factory front" data-id={this.props.id}>
 	    			<i className="toggle fa fa-folder-open" />
 	    			<span className="factory label input name">{this.props.name}</span>
+	    			<span className="factory bounds">
+		    			[<span className="input bound lowerBound">{this.props.lower}</span>
+		    			,<span className="input bound upperBound">{this.props.upper}</span>]
+	    			</span>
 	    			<div className="factory ctrl">
 						<button data-id={this.props.id} className="delete ctrl">
 							<i className="ctrl fa fa-trash" />
@@ -59,7 +63,7 @@ var FactoryList = React.createClass({
 			factoryNodes = this.props.data.map(function (factory) {
 				counter++;
 				return (
-					<Factory key={counter} id={factory.id} name={factory.name} children={factory.children} />
+					<Factory key={counter} upper={factory.upper} lower={factory.lower} id={factory.id} name={factory.name} children={factory.children} />
 				);
     		});
 		}
