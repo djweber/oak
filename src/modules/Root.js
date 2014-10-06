@@ -13,8 +13,9 @@ Root.prototype.addChild = function(node) {
 	this.children.push(node);
 }
 
-Root.prototype.addFactory = function() {
-	/* Generate new factory and add it to our children array */
+Root.prototype.addFactory = function(f) {
+	/* Add factory to our children array */
+	this.children.push(f);
 }
 
 Root.prototype.delFactory = function(id) {

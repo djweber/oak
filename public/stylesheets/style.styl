@@ -4,7 +4,6 @@ body
     margin 0
     background #eee
 
-
 div.container
     font-family 'Roboto Slab', serif
     max-width 980px
@@ -23,12 +22,12 @@ div.container
         margin 20px 0px;
 
     div#tree
-        -webkit-touch-callout none
-        -webkit-user-select none
-        -khtml-user-select none
-        -moz-user-select none
-        -ms-user-select none
-        user-select none
+        // -webkit-touch-callout none
+        // -webkit-user-select none
+        // -khtml-user-select none
+        // -moz-user-select none
+        // -ms-user-select none
+        // user-select none
         cursor pointer
     div.root
         position relative
@@ -36,14 +35,17 @@ div.container
         background #eee
         color #eee
         >div.front
-            height 60px
             background #1f8fdb
+        >div.front, div.factory.front
+            min-height 60px
             width 100%
             &.editing
                 background #EDBB2F
                 color #404040
                 transition all 0.2s linear
-            > .root.ctrl
+            .factory.ctrl
+                margin-left -40px
+            .root.ctrl, .factory.ctrl
                 padding 0 15px
                 position absolute
                 right 0
@@ -73,7 +75,8 @@ div.container
                     color #EDBB2F
                     border-color #EDBB2F
                     transition all 0.2s linear
-                button.add:hover
+                button.add:hover,
+                button.generate:hover
                     color #4BBF62
                     border-color #4BBF62
                     transition all 0.2s linear
@@ -94,9 +97,11 @@ div.container
                         background #DE4040
                     i
                         margin 0
-        div.root.front:hover .ctrl, div.root.front.editing .ctrl
+        div.root.front:hover .ctrl, div.root.front.editing .ctrl,
+        div.factory.front:hover .ctrl, div.factory.front.editing .ctrl
             opacity 1.0
-        div.root.front.editing span
+        div.root.front.editing span,
+        div.factory.front.editing span
             border-bottom 2px dashed #404040
         &>i
             position relative
@@ -109,15 +114,16 @@ div.container
             margin-top 14px
             font-size 1.4em
             margin-left 40px
-        div.parent
-            line-height 40px
+        div.factory
+            line-height 60px
             position relative
             background #ccc
-            i
+            i.toggle
+                left 70px
+            i.ctrl, i.toggle
                 color #505050
                 position relative
-                left 70px
-            span.parent.label
+            span.factory.label
                 color #505050
                 font-size 1.2em
                 margin-left 70px

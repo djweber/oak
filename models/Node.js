@@ -4,6 +4,7 @@ var Schema = Mongoose.Schema;
 var nodeSchema = new Mongoose.Schema({
 	name: 'string',
 	type: 'string',
+	parent: 'string',
 	node_id: 'string',
 	children: 'array',
 	lower: 'number',

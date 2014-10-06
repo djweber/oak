@@ -2,7 +2,7 @@ var Node = require('./Node');
 
 function Factory(parent, lower, upper) {
 	Node.call(this, "factory", "New factory");
-	this.parent = null;
+	this.parent = parent;
 	this.lower = lower; /* Lower bound for random number generation */
 	this.upper = upper; /* Upper bound '' '' '' */
 	this.children = []; //ObjectIDs of child (factory) nodes

@@ -12,46 +12,49 @@ var comp = null; /* Main react component */
 *****************************************/
 
 function bindEvents() {
-    $(document).on('click', '.root.ctrl', function(e) {
+    /* Since events are dynamically generated, use delegation */
+    $(document).on('click', '.ctrl', function(e) {
         var target = $(e.target);
         if( target.is('button.delete, button.delete > i') )
         {
             console.log('Delete');
-            deleteNode(target.parents('div.root.node'), false);
+            deleteNode(target.closest('button.delete').attr("data-id"), false);
         }
         else if( target.is('button.edit, button.edit > i')  )
         {
             console.log('Edit');
-            editNode(target.parents('div.root.front'), false);
+            editNode(target.closest('div.front'), false);
         }
         else if( target.is('button.add, button.add > i')  )
         {
             console.log('Add');
-            addParent(target.parents('div.root.node'), false);
+            addFactory(target.closest('div.front'), false);
         }
         else if( target.is('button.save') )
         {
             console.log('Save data');
-            finishedEditing(target.parents('div.root.front'), true);
+            finishedEditing(target.closest('div.front'), true);
         }
         else if( target.is('button.cancel') )
         {
-            finishedEditing(target.parents('div.root.front'), false);
+            finishedEditing(target.closest('div.front'), false);
         }
         return false;
     });
 
+    /* UI Toggle Effects */
+
     $(document).on('click', 'div.root.front', function(e) {
         console.log('Root');
         if( $(this).hasClass('editing') ) return;
-        toggleChildren($(this).parent(), '.node.parent');
+        toggleChildren($(this).parent(), 'div.factoryList');
         toggleFolder($(this).children('i'));
     });
 
-    $(document).on('click', 'div.parent.front', function(e) {
-        console.log('Parent');
+    $(document).on('click', 'div.factory.front', function(e) {
+        console.log('Factory');
         if( $(this).hasClass('editing') ) return;
-        toggleChildren($(this).parent(), '.node.child');
+        toggleChildren($(this).parent(), 'div.childList');
         toggleFolder($(this).children('i'));
     });
 
@@ -65,43 +68,63 @@ function bindEvents() {
             DATA MANIPULATION
 *****************************************/
 
-function getNode(id) {
-    var index;
-    var node;
-    /* Grep node out of array */
-    data.forEach(function(e, i, a){
-        if(e.id == id) {
-            index = i;
-            node = e;
-        }
-    });
+/* Recursively fetch node from our data array using a Closure-style IIFE*/
+function getNode(id, theData) {
 
-    return [node, index];
+    var index = null;
+    var node = null;
+    var context = null;
+    console.log("Nodes");
+
+    (function recurse(id, d) {
+        /* Recursively search for node in tree */
+        for(var i = 0; i < d.length; i++){
+            if(d[i].id == id){
+                index = i;
+                node = d[i];
+                context = d;
+                break;
+            } else if(d[i].children && d[i].children.length > 0) {
+                recurse(id, d[i].children);
+            }
+        }
+
+        return;
+    }(id, theData));
+
+    return [node, index, context];
 }
 
+/*Push a new root node onto our top-level data array */
 function addRoot() {
-    /* Create new root object and add to data array */
     var root = new Root("New root");
+
+    data.push(root);
 
     /* Save root to our data + DB */
     saveNode(root);
 }
 
+/* Add factory for root node */
 function addFactory(root) {
     /* Get root node from array */
-    var id = $(root).attr("id");
-    var result = getNode(root.id);
+    var id = root.attr("data-id");
+    var result = getNode(id, data);
+    console.log("The root", result);
 
     /* Make new factory node */
     var f = new Factory(result[0].id, 0, 100);
 
     /* Call addChild() */
-    result.addChild(f);
+    result[0].addFactory(f);
 
-    /* Save parent to DB */
+    comp.setState({data:data});
+
+    /* Save factory to DB, and update the parent */
     saveNode(f);
 }
 
+/* Save a new node to the DB */
 function saveNode(n) {
     $.ajax({
         type: "PUT",
@@ -110,59 +133,55 @@ function saveNode(n) {
             "node" : JSON.stringify(n)
         },
         success: function(d) {
-            data.push(n);
             comp.setState({data: data});
         }
     });
 }
 
-function saveChanges(n) {
-    $.ajax({
-        type: "POST",
-        url: "tree/",
-        data: {
-            "node" : JSON.stringify(n)
-        },
-        success: function(d) {
-        }
-    });
-}
-
 function editNode(n, isSocketEvent) {
-    console.log(n);
     $(n).find('button.ctrl').toggle();
     $(n).find('button.modify').toggle();
     $(n).addClass('editing');
     $(n).find('span.input').attr('contenteditable', true);
-    $(n).children('.root.ctrl').addClass('editing');
+    $(n).children('.ctrl').addClass('editing');
 }
 
+/* Handle changes to node */
 function finishedEditing(n, save) {
-    var node = getNode($(n).attr('data-id'));
-
-    console.log("Da node", node);
 
     if(save) {
+        var id = $(n).attr('data-id');
+        var node = getNode(id, data)[0];
+        var nodeElement = $("[data-id=" + id + "]");
 
-        if(node[0] instanceof Root) {
+        console.log("Da node", nodeElement.html());
 
+        /* Overwrite current name with new one */
+        console.log(nodeElement);
+        node.name = nodeElement.find('span.input.name').html();
+        console.log("New name", node.name);
+
+        if(node instanceof Root) {
             console.log("is root");
-
-        } else if(node[0] instanceof Factory) {
-
+            /* Nothing else to do here since we're just changing the name */
+        } else if(node instanceof Factory) {
             console.log("is factory");
+            /* Update bounds */
+            /* node.upper = (value from upper input) */
 
         } else {
-            console.log("???");
+            console.log("Unknown node type");
+
         }
 
-        /* Set its properties */
-
-
         /* Save changes to DB */
-        //saveChanges(node);
+        saveChanges(node);
+
+        /* Refresh our view */
+        comp.setState({data: data});
     }
 
+    /* Exit 'edit' mode for node */
     $(n).find('button.ctrl').toggle();
     $(n).find('button.modify').toggle();
     $(n).removeClass('editing');
@@ -170,26 +189,53 @@ function finishedEditing(n, save) {
     $(n).children('div.ctrl').removeClass('editing');
 }
 
-function generateNodes(f) {
-    /* Call generate() for factory, it will take care of the rest */
+/* Save changes for node */
+function saveChanges(n) {
+    $.ajax({
+        type: "POST",
+        url: "tree/" + n.id,
+        data: {
+            "node" : JSON.stringify(n)
+        },
+        success: function(d) {
+            console.log(d);
+        }
+    });
 }
 
-function deleteNode(n) {
+function generateNodes(f) {
+    /* Call generate() for factory */
+}
+
+function deleteNode(id) {
     if( confirm('Are you sure you want to delete this node?') ) {
-        console.log('Deleting node', n);
-        var id = $(n).attr("id");
-        console.log("id", id);
+
+        console.log('Deleting node', id);
 
         /* Remove node from data */
-        var node = getNode(id);
-        console.log(node);
-        data.splice(node[1], 1);
+        removeNodeFromData(id);
 
         /* Update DB -> emit deletion event from server */
-        return true;
-    }
+        $.ajax({
+            type: "DELETE",
+            url: "tree/" + id,
+            data: {
+                id: id
+            },
+            success: function(data) {
 
-    return false;
+            }
+        });
+    }
+}
+
+/* This function removes the node from the raw data. It's called directly
+   when a deletion socket event is received */
+function removeNodeFromData(id) {
+    var node = getNode(id, data);
+    console.log(node[2].splice(node[1], 1));
+    console.log(data);
+    comp.setState({data: data});
 }
 
 /*****************************************
@@ -222,13 +268,11 @@ module.exports = function() {
     /* Seeds some data for React testing */
     data = [new Root("root 1"), new Root("root 2"), new Root("root 3")];
     console.log(data);
-    /* TODO */
 
-    /* Set up our socket events for out data socket.init(data) */
+    /* TODO Set up our socket events for out data socket.init(data) */
 
-    /* Fetch our data and feed it to react - we're live! */
+    /* TODO Fetch our data and feed it to react - we're live! */
 
     /* Initialize our React-driven tree */
     comp = React.renderComponent(Tree({data: data}), document.getElementById('tree'));
-    console.log(comp);
 };
