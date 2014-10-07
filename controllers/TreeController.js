@@ -2,12 +2,12 @@ var Node = require('../models/Node');
 
 module.exports = {
 	deleteNode: function (n) {
-
+		console.log("Deleting...");
 		if( this.hasChildren(n) ) {
 			n.children.forEach(function(v, i, a) {
 				Node.findOne({node_id: v}, function(err, result){
 					if(err) throw err;
-					console.log("Result", result);
+					//console.log("Result", result);
 					this.deleteNode(result);
 				}.bind(this));
 				console.log("Children", n.children);
@@ -23,12 +23,10 @@ module.exports = {
 	},
 	hasChildren: function(n) {
 		if(n.children != undefined && n.children != null && n.children.length > 0) {
+			//console.log("Has children");
 			return true;
 		}
-		console.log("No children");
+		//console.log("No children");
 		return false;
-	}
-	getData: function(n) {
-
 	}
 }

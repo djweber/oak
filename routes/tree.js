@@ -5,10 +5,10 @@ var mongoose = require('mongoose');
 var TreeController = require('../controllers/TreeController');
 
 router.put('/', function(req, res) {
+	var io = req.app.get('socket');
  	var tmp = req.param("node");
  	tmp = JSON.parse(tmp);
- 	console.log(tmp);
-
+ 	//console.log(tmp);
  	/* Save our new node to the DB */
  	var node = new Node({
  		node_id: tmp.id,
@@ -33,29 +33,89 @@ router.put('/', function(req, res) {
  		/* Add this node to parent's list of children */
  		Node.findOneAndUpdate({node_id: tmp.parent}, { $push: { children: tmp.id }}, function(err) {
  			console.log("Child added");
- 			/* TODO Emit socket event to others */
  		});
  	}
 });
 
-
+/* Fetch all the tree data */
 router.get('/', function(req, res) {
-	/* Recursively fetch all of our tree data and put it together */
 
-	/* First, get all of our root nodes */
+	var data = [];
+	var count = 0;
+	var total = 0;
 
-		/* Get the children for each root node */
+	Node.count(function(err, c){
 
-			/* Get the children's
-}
+		total = c;
+		if(c == 0){
+			res.send(200, []);
+		}
+		console.log(total);
+
+		/* First, get all the roots */
+		Node.find( {type: "root"} ).sort({ _id: 'asc' }).exec(function(err, result) {
+			if(err) {
+				throw err;
+				res.send(500, "Error retrieving nodes");
+			}
+
+			result.forEach(function(v, i, a) {
+				data.push(v);
+				recursiveFetch(v);
+			});
+		});
+	});
+
+	function recursiveFetch(src) {
+		/* Go through children of source element */
+		count++;
+
+		if(src.children == undefined || src.children.length == 0) {
+			//console.log("No children");
+		} else {
+			//console.log("Has children");
+		}
+
+		src.children.forEach(function(val, index, array) {
+			/* Fetch the actual child from the DB, and replace the key with the object */
+			console.log(val);
+			Node.findOne({node_id: val}, function(err, result) {
+				if(err) {
+					throw err;
+					res.send(500, "Error");
+				}
+				//console.log("Adding " + result.type + " to " + src.type);
+				array[index] = result;
+				recursiveFetch(result);
+			});
+		});
+
+		if(count == total) {
+			//console.log(data);
+			res.send(200, data);
+			return;
+		}
+	}
+});
+
 
 router.delete('/:id', function(req, res) {
  	/* Find node by ID */
  	var id = req.param('id');
-
+ 	console.log(id);
  	/* We'll want to delete any children if present */
  	Node.findOne({node_id: id}, function(err, result){
  		if(result) {
+ 			/* Remove its id from any parent nodes */
+ 			console.log("Teh parent", result.parent);
+ 			console.log("Teh node_id", result.node_id);
+			Node.update(
+				{ node_id: result.parent },
+				{ $pull: { "children" : result.node_id }}, function(err, result){
+					console.log("Edited", result);
+
+				});
+ 			console.log("Deleting", result);
  			/* Recursively delete all of its children from db, if any */
  			TreeController.deleteNode(result);
  			res.send(200, "Deleted node", id);
@@ -69,6 +129,10 @@ router.post('/:id', function(req, res) {
 	var tmpNode = JSON.parse(req.param('node'));
 	//console.log(tmpNode);
 	console.log(tmpNode.id);
+	if (tmpNode.lower == undefined || tmpNode.lower == null) {
+		tmpNode.lower = 0;
+		tmpNode.upper = 0;
+	}
 	Node.where('node_id', tmpNode.id).update({
 		$set: {
 			"name": tmpNode.name,
@@ -82,8 +146,6 @@ router.post('/:id', function(req, res) {
 		};
 
 		res.send(200, "Node updated");
-
-		/* TODO Emit socket event to others */
 	});
 });
 

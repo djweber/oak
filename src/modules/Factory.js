@@ -1,8 +1,11 @@
 var Node = require('./Node');
 var Child = require('./Child');
 
-function Factory(parent, lower, upper) {
-	Node.call(this, "factory", "New factory");
+function Factory(parent, lower, upper, name, id) {
+	if(name == null) {
+		name = "New factory";
+	}
+	Node.call(this, "factory", name, id);
 	this.parent = parent;
 	this.lower = lower; /* Lower bound for random number generation */
 	this.upper = upper; /* Upper bound '' '' '' */

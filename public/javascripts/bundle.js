@@ -25033,13 +25033,13 @@ $(document).ready(function(e) {
 },{"./modules/Tree":"/Users/david/Desktop/oak/src/modules/Tree.js","react":"/Users/david/Desktop/oak/node_modules/react/react.js"}],"/Users/david/Desktop/oak/src/modules/Child.js":[function(require,module,exports){
 var Node = require('./Node');
 
-function Child(parent, value) {
+function Child(parent, value, id) {
 	if(value == undefined) {
 		return;
 	}
-	Node.call(this, "child", value.toString());
+	Node.call(this, "child", value.toString(), id);
 	this.parent = parent;
-	this.value = value;
+	this.value = parseInt(value);
 }
 
 /* Set up prototype chain + constructor */
@@ -25051,8 +25051,11 @@ module.exports = Child;
 var Node = require('./Node');
 var Child = require('./Child');
 
-function Factory(parent, lower, upper) {
-	Node.call(this, "factory", "New factory");
+function Factory(parent, lower, upper, name, id) {
+	if(name == null) {
+		name = "New factory";
+	}
+	Node.call(this, "factory", name, id);
 	this.parent = parent;
 	this.lower = lower; /* Lower bound for random number generation */
 	this.upper = upper; /* Upper bound '' '' '' */
@@ -25086,9 +25089,14 @@ module.exports = Factory;
 },{"./Child":"/Users/david/Desktop/oak/src/modules/Child.js","./Node":"/Users/david/Desktop/oak/src/modules/Node.js"}],"/Users/david/Desktop/oak/src/modules/Node.js":[function(require,module,exports){
 var ShortId = require('shortid');
 
-function Node(type, name) {
+function Node(type, name, id) {
 	/* Create our persistent ID for this node */
-	this.id = ShortId.generate();
+	if(id == null){
+		console.log("Generating ID");
+		this.id = ShortId.generate();
+	} else {
+		this.id = id;
+	}
 	this.type = type;
 	this.name = name;
 }
@@ -25254,8 +25262,8 @@ module.exports = RootList;
 },{"react":"/Users/david/Desktop/oak/node_modules/react/react.js"}],"/Users/david/Desktop/oak/src/modules/Root.js":[function(require,module,exports){
 var Node = require('./Node');
 
-function Root(name) {
-	Node.call(this, "root", name);
+function Root(name, id) {
+	Node.call(this, "root", name, id);
 	this.children = []; //ObjectIDs of child (factory) nodes
 }
 
@@ -25287,15 +25295,16 @@ module.exports = Root;
 var Root = require('./Root');
 var Factory = require('./Factory');
 var Child = require('./Child');
-var Socket = require('socket.io-client');
 var React = require('react');
 var Tree = require('./ReactTree.jsx');
 var data = []; /* Our node data */
 var comp = null; /* Main react component */
+var io = require('socket.io-client');
+var socket = null;
 
 /*****************************************
 
-           EVENTS
+           UI EVENTS
 
 *****************************************/
 
@@ -25316,7 +25325,7 @@ function bindEvents() {
         else if( target.is('button.add, button.add > i')  )
         {
             console.log('Add');
-            addFactory(target.closest('div.front'), false);
+            addFactory(target.closest('div.front'));
         }
         else if( target.is('button.generate, button.generate > i')  )
         {
@@ -25327,11 +25336,11 @@ function bindEvents() {
         else if( target.is('button.save') )
         {
             console.log('Save data');
-            finishedEditing(target.closest('div.front'), true);
+            makeEdits(target.closest('div.front'), true);
         }
         else if( target.is('button.cancel') )
         {
-            finishedEditing(target.closest('div.front'), false);
+            makeEdits(target.closest('div.front'), false);
         }
 
         return false;
@@ -25398,7 +25407,7 @@ function bindEvents() {
     });
 
     $(document).on('click', 'button#addRoot', function(e) {
-        addRoot("root");
+        addRoot();
     });
 }
 
@@ -25410,7 +25419,7 @@ function bindEvents() {
 *****************************************/
 
 
-/* Recursively fetch node from our data array using a Closure-style IIFE*/
+/* Recursively fetch node from our data array using an inner closure */
 function getNode(id, theData) {
 
     var index = null;
@@ -25437,44 +25446,76 @@ function getNode(id, theData) {
 }
 
 /*Push a new root node onto our top-level data array */
-function addRoot() {
-    var root = new Root("New root");
-
-    data.push(root);
-
-    /* Save root to our data + DB */
-    saveNode(root);
+function addRoot(r) {
+    if(!r) {
+        var root = new Root("New root");
+        console.log("New root", root.id);
+         /* Save root to our data + DB */
+        saveNode(root);
+        data.push(root);
+        comp.setState( {data: data} );
+    } else {
+        /* Construct root from data */
+        var tmp = JSON.parse(r["node"]);
+        console.log("Tmp", tmp);
+        var root = new Root(tmp.name, tmp.id);
+        data.push(root);
+        comp.setState( {data:data} );
+    }
 }
 
 /* Add factory for root node */
-function addFactory(root) {
+function addFactory(root, f) {
+
     /* Get root node from array */
-    var id = root.attr("data-id");
+    var id = null;
+    var factory = null;
+    var newFactory = null;
+
+    if(root) {
+        id = root.attr("data-id");
+    } else {
+        console.log("Root was received instead");
+        factory = JSON.parse(f["node"]);
+        id = factory.parent;
+    }
+
     var result = getNode(id, data);
+
     console.log("The root", result);
 
-    /* Make new factory node */
-    var f = new Factory(result[0].id, 0, 100);
+    if( !f ) {
+        /* Make new factory node */
+        newFactory = new Factory(result[0].id, 0, 100);
+        /* Save factory to DB, and update the parent */
+        saveNode(newFactory);
+    } else {
+        console.log("The new factory", factory);
+        newFactory = new Factory(id, factory.lower, factory.upper, factory.name, factory.node_id);
+    }
 
-    /* Call addChild() */
-    result[0].addFactory(f);
-
+    result[0].addFactory(newFactory);
+    console.log(result[0]);
     comp.setState({data:data});
-
-    /* Save factory to DB, and update the parent */
-    saveNode(f);
 }
 
 /* Save a new node to the DB */
 function saveNode(n) {
+    var node = JSON.stringify(n);
     $.ajax({
         type: "PUT",
         url: "tree/",
         data: {
-            "node" : JSON.stringify(n)
+            "node" : node
         },
         success: function(d) {
-            comp.setState({data: data});
+            /* Emit event */
+            if(n.type=="root") {
+                socket.emit('addRoot', {node: node});
+            }
+            else if(n.type=="factory") {
+                socket.emit('addFactory', {node: node});
+            }
         }
     });
 }
@@ -25489,10 +25530,21 @@ function editNode(n, isSocketEvent) {
 }
 
 /* Handle changes to node */
-function finishedEditing(n, save) {
+function makeEdits(n, save, d) {
     var id = $(n).attr('data-id');
     var node = getNode(id, data)[0];
     var nodeElement = $("[data-id=" + id + "]");
+
+    if(d) {
+        console.log("The D", d);
+        var tmpNode = JSON.parse(d["node"]);
+        var node = getNode(tmpNode.node_id, data)[0];
+        node.name = tmpNode.name;
+        if(node.type == "factory") {
+            node.lower = tmpNode.lower;
+            node.upper = tmpNode.upper;
+        }
+    }
 
     if(save) {
         //console.log("Da node", nodeElement.html());
@@ -25504,6 +25556,7 @@ function finishedEditing(n, save) {
 
         if(node instanceof Root) {
             console.log("is root");
+            console.log(node);
             /* Nothing else to do here since we're just changing the name */
         } else if(node instanceof Factory) {
             console.log("is factory");
@@ -25518,12 +25571,12 @@ function finishedEditing(n, save) {
 
         /* Save changes to DB */
         saveChanges(node);
-
-        /* Refresh our view */
-        comp.setState({data: data});
     } else {
         /* Revert to original state */
     }
+
+    /* Refresh our view */
+    comp.setState({data: data});
 
     /* Exit 'edit' mode for node */
     $(n).find('button.ctrl').toggle();
@@ -25543,6 +25596,7 @@ function saveChanges(n) {
         },
         success: function(d) {
             console.log(d);
+            socket.emit("modify", {node: n});
         }
     });
 }
@@ -25598,11 +25652,58 @@ function deleteNode(id) {
     }
 }
 
+function getInitialTreeData() {
+    $.ajax({
+        type: "GET",
+        url: "tree/",
+        success: function(data) {
+            if(data == null || data == undefined) {
+                alert("Error retrieving data");
+            } else {
+                console.log("Done");
+                console.log(data);
+                generateTreeFromObjects(data);
+            }
+        }
+    });
+}
+
 /* This function removes the node from the raw data. It's called directly
    when a deletion socket event is received */
 function removeNodeFromData(id) {
     var node = getNode(id, data);
     node[2].splice(node[1], 1);
+    comp.setState({data: data});
+}
+
+/* Construct our initial view from the currently stored data */
+function generateTreeFromObjects(obj) {
+    var tmp = [];
+    for(var i = 0; i < obj.length; i++) {
+        var tmpRoot = obj[i];
+        var root = new Root(tmpRoot.name, tmpRoot.node_id);
+        tmp.push(root);
+        var rootChildren = tmpRoot.children;
+        for(var j = 0; j < rootChildren.length; j++) {
+            var tmpFactory = rootChildren[j];
+            var factory = new Factory(tmpRoot.node_id,
+                tmpFactory.lower,
+                tmpFactory.upper,
+                tmpFactory.name,
+                tmpFactory.node_id);
+
+            root.children.push(factory);
+            var factoryChildren = tmpFactory.children;
+            for(var k = 0; k < factoryChildren.length; k++) {
+                var tmpChild = factoryChildren[k];
+                var child = new Child(tmpFactory.node_id, parseInt(tmpChild.name), tmpChild.node_id);
+                factory.children.push(child);
+            }
+        }
+    }
+    console.log("Done");
+    console.log(tmp);
+    data = tmp;
     comp.setState({data: data});
 }
 
@@ -25634,18 +25735,46 @@ function toggleFolder(f) {
 
 *****************************************/
 
+function socketSetup() {
+    socket = io("http://localhost:3000");
+
+    socket.on("connect", function() {
+        console.log("Socket connection established");
+
+        socket.on("addRoot", function(d) {
+            console.log("Add root", d);
+            addRoot(d["root"]);
+        });
+
+        socket.on("addFactory", function(d) {
+            console.log("Add factory", d);
+            addFactory(null, d["factory"]);
+        });
+
+        socket.on("modify", function(d) {
+            console.log("Modify", d);
+            makeEdits(null, false, d["node"]);
+        });
+
+        socket.on("generate", function(d) {
+
+        });
+
+        socket.on("delete", function(d) {
+
+        });
+    });
+}
+
 
 module.exports = function() {
     /* Set up event delegation on tree */
     bindEvents();
 
-    /* Seeds some data for React testing */
-    data = [new Root("root 1"), new Root("root 2"), new Root("root 3")];
-    console.log(data);
-
     /* TODO Set up our socket events for out data socket.init(data) */
+    socketSetup();
 
-    /* TODO Fetch our data and feed it to react - we're live! */
+    /* Fetch our data and feed it to react - we're live! */
     getInitialTreeData();
 
     /* Initialize our React-driven tree */

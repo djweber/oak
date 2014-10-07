@@ -1,7 +1,7 @@
 var Node = require('./Node');
 
-function Root(name) {
-	Node.call(this, "root", name);
+function Root(name, id) {
+	Node.call(this, "root", name, id);
 	this.children = []; //ObjectIDs of child (factory) nodes
 }
 
