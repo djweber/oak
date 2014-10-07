@@ -1,3 +1,9 @@
+/*****************************************
+
+            PRIVATE MODULE VARIABLES
+
+*****************************************/
+
 var Root = require('./Root');
 var Factory = require('./Factory');
 var Child = require('./Child');
@@ -8,7 +14,9 @@ var data = []; /* Our node data */
 var comp = null; /* Main react component */
 
 /*****************************************
+
            EVENTS
+
 *****************************************/
 
 function bindEvents() {
@@ -34,7 +42,7 @@ function bindEvents() {
         {
             console.log('Generate');
             var id = target.closest('button').attr('data-id');
-            generateNodes(id);
+            generateNodes(id, 10, null);
         }
         else if( target.is('button.save') )
         {
@@ -79,13 +87,15 @@ function bindEvents() {
 
             var factoryNode = $(e.target).closest('div.factory.front');
 
+            /* Trick: position of menu is translated (-5, -5) from cursor so that
+               the mouseleave event properly triggers (cursor stars in box) */
             $('#genMenu').css({
-                 "top": e.pageY - 10,
-                "left": e.pageX - 10,
+                 "top": e.pageY - 5,
+                "left": e.pageX - 5,
             }).slideDown(100);
-        }
 
-        return false;
+            return false;
+        }
     });
 
     $("#genMenu").on("mouseleave", function(e){
@@ -114,8 +124,11 @@ function bindEvents() {
 
 
 /*****************************************
-            DATA MANIPULATION
+
+           DATA OPERATIONS
+
 *****************************************/
+
 
 /* Recursively fetch node from our data array using a Closure-style IIFE*/
 function getNode(id, theData) {
@@ -186,6 +199,7 @@ function saveNode(n) {
     });
 }
 
+/* Initiate 'edit' mode for node */
 function editNode(n, isSocketEvent) {
     $(n).find('button.ctrl').toggle();
     $(n).find('button.modify').toggle();
@@ -253,15 +267,33 @@ function saveChanges(n) {
     });
 }
 
-function generateNodes(f) {
-    /* Call generate() for factory */
-    //console.log("Generating nodes for factory", f);
+/* Generate nodes for factory */
+function generateNodes(f, count, childList) {
     var node = getNode(f, data)[0];
-    node.generate(5);
+
+    if(childList != null && childList.length > 0) {
+        /* Data provided (socket event), just generate */
+        node.generate(null, childList);
+    } else if(childList == null) {
+        /* No data provided (not a socket event), save our
+           new data to server */
+        node.generate(count, null);
+        var children = JSON.stringify(node.children);
+        $.ajax({
+            type: "PUT",
+            url: "/tree/generate/",
+            data: {
+                id: node.id,
+                children: children
+            },
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    }
+
+    /* Update our React view */
     comp.setState({data:data});
-
-    /* Save our changes to the server */
-
 }
 
 function deleteNode(id) {
@@ -280,7 +312,7 @@ function deleteNode(id) {
                 id: id
             },
             success: function(data) {
-
+                console.log(data);
             }
         });
     }
@@ -295,8 +327,11 @@ function removeNodeFromData(id) {
 }
 
 /*****************************************
-            UI BEHAVIOR
+
+           UI METHODS
+
 *****************************************/
+
 
 function toggleChildren(elem, selector) {
     $(elem).children(selector).slideToggle(250);
@@ -314,8 +349,11 @@ function toggleFolder(f) {
 }
 
 /*****************************************
-           MODULE
+
+           INITIALIZATION
+
 *****************************************/
+
 
 module.exports = function() {
     /* Set up event delegation on tree */
@@ -328,6 +366,7 @@ module.exports = function() {
     /* TODO Set up our socket events for out data socket.init(data) */
 
     /* TODO Fetch our data and feed it to react - we're live! */
+    getInitialTreeData();
 
     /* Initialize our React-driven tree */
     comp = React.renderComponent(Tree({data: data}), document.getElementById('tree'));

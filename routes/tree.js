@@ -4,7 +4,6 @@ var Node = require('../models/Node');
 var mongoose = require('mongoose');
 var TreeController = require('../controllers/TreeController');
 
-/* GET home page. */
 router.put('/', function(req, res) {
  	var tmp = req.param("node");
  	tmp = JSON.parse(tmp);
@@ -38,6 +37,17 @@ router.put('/', function(req, res) {
  		});
  	}
 });
+
+
+router.get('/', function(req, res) {
+	/* Recursively fetch all of our tree data and put it together */
+
+	/* First, get all of our root nodes */
+
+		/* Get the children for each root node */
+
+			/* Get the children's
+}
 
 router.delete('/:id', function(req, res) {
  	/* Find node by ID */
@@ -77,15 +87,54 @@ router.post('/:id', function(req, res) {
 	});
 });
 
-router.put('/generate/:id', function(req, res){
+router.put('/generate', function(req, res){
 	/* Get the factory node */
-	var tmpNode = JSON.parse(req.param('node'));
+	var factory = req.param('id');
+	var children = JSON.parse(req.param('children'));
+
+	/* Get the list of keys */
+	var keys = [];
+	children.forEach(function(v, i, a){
+		// console.log(v);
+		keys.push(v["id"]);
+	});
 
 	/* Delete all of the factory's current children */
+	Node.remove({ parent: factory }, function (err) {
+		//console.log("Current factory children removed");
+		/* Clear factory's list of children */
+		Node.where('node_id', factory).update({
+			$set: { "children": keys }}, function(err, result) {
 
-	/* Insert new children for factory */
+			if(err) {
+				//console.log(err);
+				res.send(500, err);
+			}
 
-	/* TODO Emit socket event to others */
+			/* Insert new children */
+			for(var i = 0; i < children.length; ++i) {
+				var node = new Node({
+			 		node_id: children[i].id,
+			 		name: children[i].name,
+			 		type: children[i].type,
+			 		parent: children[i].parent
+		 		});
+
+			 	node.save(function(err, node) {
+			 		if(err) {
+			 			return console.log(err);
+			 		}
+			 		console.log("Saved node: ", node);
+			 	});
+
+			 	if(i == children.length - 1 ) {
+			 		res.send(200, "Nodes generated");
+ 					/* TODO Emit socket event to others */
+
+			 	}
+			}
+		});
+	});
 });
 
 module.exports = router;

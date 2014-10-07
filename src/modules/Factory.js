@@ -13,22 +13,23 @@ function Factory(parent, lower, upper) {
 Factory.prototype = new Node();
 Factory.prototype.constructor = Factory;
 
-Factory.prototype.generate = function(count) {
+Factory.prototype.generate = function(count, data) {
 	/* Clear current set of children */
 	this.children = [];
 
-	/* Generate new children and add them to child array */
-	for(var i = 0; i < count; i++) {
-		/* Get random number between lower and upper bound */
-		var random = Math.floor(Math.random() * (this.upper - this.lower + 1)) + this.lower;
-		var c = new Child(this.id, random);
-		this.children.push(c);
+	if(data != null) {
+		for(var i = 0; i < data.length; i++) {
+			this.children.push(data[i]);
+		}
+	} else {
+		/* Generate new children and add them to child array */
+		for(var i = 0; i < count; i++) {
+			/* Get random number between lower and upper bound */
+			var random = Math.floor(Math.random() * (this.upper - this.lower + 1)) + parseInt(this.lower);
+			var c = new Child(this.id, random);
+			this.children.push(c);
+		}
 	}
-}
-
-Factory.prototype.delChildren = function() {
-	/* Delete factory from our children array when generating new numbers */
-	this.children = [];
 }
 
 module.exports = Factory;

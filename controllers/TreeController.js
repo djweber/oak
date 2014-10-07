@@ -28,4 +28,7 @@ module.exports = {
 		console.log("No children");
 		return false;
 	}
+	getData: function(n) {
+
+	}
 }
