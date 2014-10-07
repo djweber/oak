@@ -30,6 +30,12 @@ function bindEvents() {
             console.log('Add');
             addFactory(target.closest('div.front'), false);
         }
+        else if( target.is('button.generate, button.generate > i')  )
+        {
+            console.log('Generate');
+            var id = target.closest('button').attr('data-id');
+            generateNodes(id);
+        }
         else if( target.is('button.save') )
         {
             console.log('Save data');
@@ -51,17 +57,21 @@ function bindEvents() {
             return false;
         }
 
-        /* We only want bound numbers to be entered, not characters */
+        /* We only want factory bound numbers to be entered, not characters */
         if( $(e.target).is('span.input.bound') ) {
             var unicode= e.keyCode? e.keyCode : e.charCode;
-            if( !(unicode >= 48 && unicode <= 57) ) {
+            console.log(unicode);
+
+            /* Numbers, backspace, and delete are OK */
+            if ( (unicode >= 48 && unicode <= 57) || unicode == 8 || unicode == 46 ) {
+                return true;
+            } else {
                 return false;
             }
         }
     });
 
     /* UI Toggle Effects */
-
     $(document).on('click', 'div.root.front', function(e) {
         console.log('Root');
         if( $(this).hasClass('editing') ) return;
@@ -165,13 +175,12 @@ function editNode(n, isSocketEvent) {
 
 /* Handle changes to node */
 function finishedEditing(n, save) {
+    var id = $(n).attr('data-id');
+    var node = getNode(id, data)[0];
+    var nodeElement = $("[data-id=" + id + "]");
 
     if(save) {
-        var id = $(n).attr('data-id');
-        var node = getNode(id, data)[0];
-        var nodeElement = $("[data-id=" + id + "]");
-
-        console.log("Da node", nodeElement.html());
+        //console.log("Da node", nodeElement.html());
 
         /* Overwrite current name with new one */
         console.log(nodeElement);
@@ -184,8 +193,9 @@ function finishedEditing(n, save) {
         } else if(node instanceof Factory) {
             console.log("is factory");
             /* Update bounds */
-            /* node.upper = (value from upper input) */
-
+            node.lower = nodeElement.find('span[data-id=' + id + "].lowerBound").html();
+            node.upper = nodeElement.find('span[data-id=' + id + "].upperBound").html();
+            console.log("The new bounds:", node.lower, node.upper);
         } else {
             console.log("Unknown node type");
 
@@ -196,6 +206,8 @@ function finishedEditing(n, save) {
 
         /* Refresh our view */
         comp.setState({data: data});
+    } else {
+        /* Revert to original state */
     }
 
     /* Exit 'edit' mode for node */
@@ -222,6 +234,12 @@ function saveChanges(n) {
 
 function generateNodes(f) {
     /* Call generate() for factory */
+    //console.log("Generating nodes for factory", f);
+    var node = getNode(f, data)[0];
+    node.generate(5);
+    comp.setState({data:data});
+
+    /* Save our changes to the server */
 }
 
 function deleteNode(id) {

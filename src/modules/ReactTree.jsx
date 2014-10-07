@@ -4,15 +4,35 @@
 
 var React = require('react');
 
-// var Child = React.createClass({
-// 	render: function() {
-// 	    return (
-// 	      <div className="commentList">
-// 	        {commentNodes}
-// 	      </div>
-// 	    );
-// 	}
-// });
+var Child = React.createClass({
+	render: function() {
+	    return (
+	    	<div className="node child">
+	    		<span className="child label">{this.props.name}</span>
+	    	</div>
+	    );
+	}
+});
+
+var ChildList = React.createClass({
+	render: function() {
+		var childNodes = null;
+		var counter = 0;
+		if (this.props.data) {
+			childNodes = this.props.data.map(function (child) {
+				counter++;
+				return (
+					<Child key={counter} value={child.value} name={child.name}/>
+				);
+    		});
+		}
+	    return (
+			<div className="children childList">
+				{childNodes}
+			</div>
+	    );
+	}
+});
 
 var Factory = React.createClass({
 	componentDidMount: function() {
@@ -28,8 +48,8 @@ var Factory = React.createClass({
 	    			<i className="toggle fa fa-folder-open" />
 	    			<span className="factory label input name">{this.props.name}</span>
 	    			<span className="factory bounds">
-		    			[<span className="input bound lowerBound">{this.props.lower}</span>
-		    			,<span className="input bound upperBound">{this.props.upper}</span>]
+		    			[<span data-id={this.props.id} className="input bound lowerBound">{this.props.lower}</span>
+		    			,<span data-id={this.props.id} className="input bound upperBound">{this.props.upper}</span>]
 	    			</span>
 	    			<div className="factory ctrl">
 						<button data-id={this.props.id} className="delete ctrl">
@@ -38,7 +58,7 @@ var Factory = React.createClass({
 						<button className="edit ctrl">
 							<i className="ctrl fa fa-pencil" />
 						</button>
-						<button className="generate ctrl">
+						<button data-id={this.props.id} className="generate ctrl">
 							<i className="ctrl fa fa-play" />
 						</button>
 						<button className="save modify" style={{"display": "none"}}>
@@ -49,6 +69,7 @@ var Factory = React.createClass({
 						</button>
 					</div>
 	    		</div>
+	    		<ChildList data={this.props.children} />
 	    	</div>
 	    );
 	}

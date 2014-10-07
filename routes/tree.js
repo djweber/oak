@@ -34,6 +34,7 @@ router.put('/', function(req, res) {
  		/* Add this node to parent's list of children */
  		Node.findOneAndUpdate({node_id: tmp.parent}, { $push: { children: tmp.id }}, function(err) {
  			console.log("Child added");
+ 			/* TODO Emit socket event to others */
  		});
  	}
 });
@@ -48,6 +49,7 @@ router.delete('/:id', function(req, res) {
  			/* Recursively delete all of its children from db, if any */
  			TreeController.deleteNode(result);
  			res.send(200, "Deleted node", id);
+ 			/* TODO Emit socket event to others */
  		}
  	});
  });
@@ -58,7 +60,11 @@ router.post('/:id', function(req, res) {
 	//console.log(tmpNode);
 	console.log(tmpNode.id);
 	Node.where('node_id', tmpNode.id).update({
-		$set: { "name": tmpNode.name }
+		$set: {
+			"name": tmpNode.name,
+			"lower": tmpNode.lower,
+			"upper": tmpNode.upper
+		}
 	}, function(err, result) {
 		if(err) {
 			console.log(err);
@@ -66,7 +72,20 @@ router.post('/:id', function(req, res) {
 		};
 
 		res.send(200, "Node updated");
+
+		/* TODO Emit socket event to others */
 	});
+});
+
+router.put('/generate/:id', function(req, res){
+	/* Get the factory node */
+	var tmpNode = JSON.parse(req.param('node'));
+
+	/* Delete all of the factory's current children */
+
+	/* Insert new children for factory */
+
+	/* TODO Emit socket event to others */
 });
 
 module.exports = router;

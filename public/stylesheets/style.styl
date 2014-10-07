@@ -20,23 +20,17 @@ div.container
         font-size 1.1em
         background #4BBF62
         margin 20px 0px;
-
+        box-shadow 2px 2px 8px #202020
     div#tree
-        // -webkit-touch-callout none
-        // -webkit-user-select none
-        // -khtml-user-select none
-        // -moz-user-select none
-        // -ms-user-select none
-        // user-select none
         cursor pointer
+        box-shadow 2px 2px 8px #202020
     div.root
         position relative
         min-height 60px
         background #eee
         color #eee
-        >div.front
+        div.front
             background #1f8fdb
-        >div.front, div.factory.front
             min-height 60px
             width 100%
             &.editing
@@ -54,49 +48,47 @@ div.container
                 opacity 0
                 vertical-align middle
                 line-height 60px
-                button.ctrl
-                    cursor pointer
-                    width 60px
-                    height 60px
-                    line-heght 0px
-                    outline none
-                    text-align center
-                    margin 0 5px
-                    color #52A2D9
-                    background transparent
-                    border none;
-                    //border-radius 32px
-                    font-size 1.8em
-                button.delete:hover
-                    color #DE4040
-                    border-color #DE4040
-                    transition all 0.2s linear
-                button.edit:hover
-                    color #EDBB2F
-                    border-color #EDBB2F
-                    transition all 0.2s linear
-                button.add:hover,
-                button.generate:hover
-                    color #4BBF62
-                    border-color #4BBF62
-                    transition all 0.2s linear
-                button.modify
-                    min-width 60px
-                    height 40px
-                    color #eee
-                    line-height 0px
-                    border-radius 0
-                    border none
-                    font-size 1.1em
-                    font-family 'Roboto Slab', serif
-                    margin 5px
-                    padding 5px
-                    &.save
-                        background #4BBF62
-                    &.cancel
-                        background #DE4040
-                    i
-                        margin 0
+            button.ctrl
+                cursor pointer
+                width 60px
+                height 60px
+                outline none
+                text-align center
+                margin 0 5px
+                color #52A2D9
+                background transparent
+                border none;
+                font-size 1.8em
+            button.delete:hover
+                color #DE4040
+                border-color #DE4040
+                transition all 0.2s linear
+            button.edit:hover
+                color #EDBB2F
+                border-color #EDBB2F
+                transition all 0.2s linear
+            button.add:hover,
+            button.generate:hover
+                color #4BBF62
+                border-color #4BBF62
+                transition all 0.2s linear
+            button.modify
+                min-width 60px
+                height 40px
+                color #eee
+                line-height 0px
+                border-radius 0
+                border none
+                font-size 1.1em
+                font-family 'Roboto Slab', serif
+                margin 5px
+                padding 5px
+                &.save
+                    background #4BBF62
+                &.cancel
+                    background #DE4040
+                i
+                    margin 0
         div.root.front:hover .ctrl, div.root.front.editing .ctrl,
         div.factory.front:hover .ctrl, div.factory.front.editing .ctrl
             opacity 1.0
@@ -130,8 +122,9 @@ div.container
             i.toggle
                 left 70px
             i.ctrl, i.toggle
-                color #505050
                 position relative
+            button.ctrl
+                color #505050
             span.factory.label
                 color #505050
                 font-size 1.2em

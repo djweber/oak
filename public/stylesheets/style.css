@@ -21,9 +21,11 @@ div.container button.addRoot {
   font-size: 1.1em;
   background: #4bbf62;
   margin: 20px 0px;
+  box-shadow: 2px 2px 8px #202020;
 }
 div.container div#tree {
   cursor: pointer;
+  box-shadow: 2px 2px 8px #202020;
 }
 div.container div.root {
   position: relative;
@@ -31,28 +33,21 @@ div.container div.root {
   background: #eee;
   color: #eee;
 }
-div.container div.root >div.front {
+div.container div.root div.front {
   background: #1f8fdb;
-}
-div.container div.root >div.front,
-div.container div.root div.factory.front {
   min-height: 60px;
   width: 100%;
 }
-div.container div.root >div.front.editing,
-div.container div.root div.factory.front.editing {
+div.container div.root div.front.editing {
   background: #edbb2f;
   color: #404040;
   transition: all 0.2s linear;
 }
-div.container div.root >div.front .factory.ctrl,
-div.container div.root div.factory.front .factory.ctrl {
+div.container div.root div.front .factory.ctrl {
   margin-left: -40px;
 }
-div.container div.root >div.front .root.ctrl,
-div.container div.root div.factory.front .root.ctrl,
-div.container div.root >div.front .factory.ctrl,
-div.container div.root div.factory.front .factory.ctrl {
+div.container div.root div.front .root.ctrl,
+div.container div.root div.front .factory.ctrl {
   padding: 0 15px;
   position: absolute;
   right: 0;
@@ -62,14 +57,10 @@ div.container div.root div.factory.front .factory.ctrl {
   vertical-align: middle;
   line-height: 60px;
 }
-div.container div.root >div.front .root.ctrl button.ctrl,
-div.container div.root div.factory.front .root.ctrl button.ctrl,
-div.container div.root >div.front .factory.ctrl button.ctrl,
-div.container div.root div.factory.front .factory.ctrl button.ctrl {
+div.container div.root div.front button.ctrl {
   cursor: pointer;
   width: 60px;
   height: 60px;
-  line-heght: 0px;
   outline: none;
   text-align: center;
   margin: 0 5px;
@@ -78,38 +69,23 @@ div.container div.root div.factory.front .factory.ctrl button.ctrl {
   border: none;
   font-size: 1.8em;
 }
-div.container div.root >div.front .root.ctrl button.delete:hover,
-div.container div.root div.factory.front .root.ctrl button.delete:hover,
-div.container div.root >div.front .factory.ctrl button.delete:hover,
-div.container div.root div.factory.front .factory.ctrl button.delete:hover {
+div.container div.root div.front button.delete:hover {
   color: #de4040;
   border-color: #de4040;
   transition: all 0.2s linear;
 }
-div.container div.root >div.front .root.ctrl button.edit:hover,
-div.container div.root div.factory.front .root.ctrl button.edit:hover,
-div.container div.root >div.front .factory.ctrl button.edit:hover,
-div.container div.root div.factory.front .factory.ctrl button.edit:hover {
+div.container div.root div.front button.edit:hover {
   color: #edbb2f;
   border-color: #edbb2f;
   transition: all 0.2s linear;
 }
-div.container div.root >div.front .root.ctrl button.add:hover,
-div.container div.root div.factory.front .root.ctrl button.add:hover,
-div.container div.root >div.front .factory.ctrl button.add:hover,
-div.container div.root div.factory.front .factory.ctrl button.add:hover,
-div.container div.root >div.front .root.ctrl button.generate:hover,
-div.container div.root div.factory.front .root.ctrl button.generate:hover,
-div.container div.root >div.front .factory.ctrl button.generate:hover,
-div.container div.root div.factory.front .factory.ctrl button.generate:hover {
+div.container div.root div.front button.add:hover,
+div.container div.root div.front button.generate:hover {
   color: #4bbf62;
   border-color: #4bbf62;
   transition: all 0.2s linear;
 }
-div.container div.root >div.front .root.ctrl button.modify,
-div.container div.root div.factory.front .root.ctrl button.modify,
-div.container div.root >div.front .factory.ctrl button.modify,
-div.container div.root div.factory.front .factory.ctrl button.modify {
+div.container div.root div.front button.modify {
   min-width: 60px;
   height: 40px;
   color: #eee;
@@ -121,22 +97,13 @@ div.container div.root div.factory.front .factory.ctrl button.modify {
   margin: 5px;
   padding: 5px;
 }
-div.container div.root >div.front .root.ctrl button.modify.save,
-div.container div.root div.factory.front .root.ctrl button.modify.save,
-div.container div.root >div.front .factory.ctrl button.modify.save,
-div.container div.root div.factory.front .factory.ctrl button.modify.save {
+div.container div.root div.front button.modify.save {
   background: #4bbf62;
 }
-div.container div.root >div.front .root.ctrl button.modify.cancel,
-div.container div.root div.factory.front .root.ctrl button.modify.cancel,
-div.container div.root >div.front .factory.ctrl button.modify.cancel,
-div.container div.root div.factory.front .factory.ctrl button.modify.cancel {
+div.container div.root div.front button.modify.cancel {
   background: #de4040;
 }
-div.container div.root >div.front .root.ctrl button.modify i,
-div.container div.root div.factory.front .root.ctrl button.modify i,
-div.container div.root >div.front .factory.ctrl button.modify i,
-div.container div.root div.factory.front .factory.ctrl button.modify i {
+div.container div.root div.front button.modify i {
   margin: 0;
 }
 div.container div.root div.root.front:hover .ctrl,
@@ -185,8 +152,10 @@ div.container div.root div.factory i.toggle {
 }
 div.container div.root div.factory i.ctrl,
 div.container div.root div.factory i.toggle {
-  color: #505050;
   position: relative;
+}
+div.container div.root div.factory button.ctrl {
+  color: #505050;
 }
 div.container div.root div.factory span.factory.label {
   color: #505050;
