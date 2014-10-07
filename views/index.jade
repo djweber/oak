@@ -1,24 +1,11 @@
 extends layout
 
 block content
+
     div(class='container' id="treeContainer")
         button(class='addRoot' id='addRoot') Add root
+        div(class='genMenu', id='genMenu', style='display: none;', data-id="")
+            button(class='factoryMenu genButton')
+                i(class="fa fa-play" style='margin-right: 5px; padding: 5px;')
+                | Generate
         div(id='tree')
-        //-     div(class='root node' data-id='1')
-        //-         div(class='root front')
-        //-             i(class="fa fa-folder-open")
-        //-             span(class='root label input name') New root
-        //-             div(class='root ctrl')
-        //-                 button(class='delete ctrl') #[i(class="fa fa-trash")]
-        //-                 button(class='edit ctrl') #[i(class="fa fa-pencil")]
-        //-                 button(class='add ctrl') #[i(class="fa fa-plus")]
-        //-                 button(class='save modify' type='button' style='display: none;') Save
-        //-                 button(class='cancel modify' type='button' style='display: none;') Cancel
-        //-         div(class='parent node')
-        //-             div(class='parent front')
-        //-                 i(class="fa fa-folder-open")
-        //-                 span(class='parent label') Parent 1
-        //-             div(class='node child')
-        //-                 span(class='child label') Child 1
-        //-             div(class='node child')
-        //-                 span(class='child label') Child 2

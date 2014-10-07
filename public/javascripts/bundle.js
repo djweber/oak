@@ -25347,6 +25347,27 @@ function bindEvents() {
         }
     });
 
+    $(document).on('contextmenu', function(e){
+        e.stopPropagation();
+
+        if( $(e.target).is('div.factory.front, div.factory.front *') ) {
+            console.log("Context menu for factory");
+
+            var factoryNode = $(e.target).closest('div.factory.front');
+
+            $('#genMenu').css({
+                 "top": e.pageY - 10,
+                "left": e.pageX - 10,
+            }).slideDown(100);
+        }
+
+        return false;
+    });
+
+    $("#genMenu").on("mouseleave", function(e){
+        $(this).toggle();
+    });
+
     /* UI Toggle Effects */
     $(document).on('click', 'div.root.front', function(e) {
         console.log('Root');
@@ -25516,6 +25537,7 @@ function generateNodes(f) {
     comp.setState({data:data});
 
     /* Save our changes to the server */
+
 }
 
 function deleteNode(id) {
