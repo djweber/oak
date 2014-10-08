@@ -41,22 +41,22 @@ function bindEvents() {
     /* Since events are dynamically generated, use delegation */
     $(document).on('click', '.ctrl', function(e) {
         var target = $(e.target);
-        if( target.is('button.delete, button.delete > i') )
+        if( target.is('button.delete, button.delete i') )
         {
             //console.log('Delete');
             deleteNode(target.closest('button.delete').attr("data-id"), true);
         }
-        else if( target.is('button.edit, button.edit > i')  )
+        else if( target.is('button.edit, button.edit i')  )
         {
             //console.log('Edit');
             editNode(target.closest('div.front'), false);
         }
-        else if( target.is('button.add, button.add > i')  )
+        else if( target.is('button.add, button.add i')  )
         {
             //console.log('Add');
             addFactory(target.closest('div.front'));
         }
-        else if( target.is('button.generate, button.generate > i')  )
+        else if( target.is('button.generate, button.generate i')  )
         {
             //console.log('Generate');
             var id = target.closest('button').attr('data-id');
@@ -149,14 +149,14 @@ function bindEvents() {
         //console.log('Root');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.factoryList');
-        toggleFolder($(this).children('i'));
+        toggleFolder($(this).find('i.toggle'));
     });
 
     $(document).on('click', 'div.factory.front', function(e) {
         //console.log('Factory');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.childList');
-        toggleFolder($(this).children('i'));
+        toggleFolder($(this).find('i.toggle'));
     });
 
     $(document).on('click', 'button#addRoot', function(e) {
@@ -316,7 +316,7 @@ function makeEdits(n, save, d, cancel) {
     if(save) {
 
         /* Overwrite current name with new one */
-        node.name = nodeElement.find('span.input.name').html();
+        node.name = nodeElement.find('span.input.name').text();
 
         if(node instanceof Root) {
             /* Nothing else to do here since we're just changing the name */
@@ -325,8 +325,8 @@ function makeEdits(n, save, d, cancel) {
             var lower = nodeElement.find('span[data-id=' + id + "].lowerBound");
             var upper = nodeElement.find('span[data-id=' + id + "].upperBound");
 
-            lower = isEmpty(lower) ? "0" : $(lower).html();
-            upper = isEmpty(upper) ? "0" : $(upper).html();
+            lower = isEmpty(lower) ? "0" : $(lower).text();
+            upper = isEmpty(upper) ? "0" : $(upper).text();
 
             node.lower = lower;
             node.upper = upper;

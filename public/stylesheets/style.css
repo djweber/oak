@@ -23,13 +23,11 @@ button.no:hover {
   background: #b23333;
   transition: all 0.1s linear;
 }
-div.container {
-  max-width: 980px;
-  min-width: 412px;
-  padding: 0px 40px;
-  margin: 0px auto;
+div.rootBar {
+  color: #909090;
+  position: relative;
 }
-div.container button.addRoot {
+div.rootBar button.addRoot {
   width: 100px;
   height: 50px;
   border: none;
@@ -38,6 +36,21 @@ div.container button.addRoot {
   font-size: 1.1em;
   margin: 20px 0px;
   box-shadow: 2px 2px 8px #202020;
+}
+div.rootBar span.title {
+  color: #505050;
+  position: absolute;
+  right: 0px;
+  line-height: 90px;
+  display: inline-block;
+  text-align: right;
+  font-size: 1.4em;
+}
+div.container {
+  max-width: 980px;
+  min-width: 480px;
+  padding: 0px 40px;
+  margin: 0px auto;
 }
 div.container div.genMenu {
   box-sizing: border-box;
@@ -95,6 +108,17 @@ div.container div.root {
   background: #eee;
   color: #eee;
 }
+div.container div.root div.blk-ctrl {
+  text-align: right;
+  position: relative;
+}
+div.container div.root div.blk-bounds {
+  text-align: center;
+  position: relative;
+}
+div.container div.root i.toggle {
+  left: 40px;
+}
 div.container div.root div.front {
   background: #1f8fdb;
   min-height: 60px;
@@ -105,13 +129,9 @@ div.container div.root div.front.editing {
   color: #404040;
   transition: all 0.2s linear;
 }
-div.container div.root div.front .factory.ctrl {
-  margin-left: -40px;
-}
 div.container div.root div.front .root.ctrl,
 div.container div.root div.front .factory.ctrl {
   padding: 0 15px;
-  position: absolute;
   right: 0;
   background: transparent;
   display: inline-block;
@@ -172,13 +192,13 @@ div.container div.root div.root.front.editing span.input,
 div.container div.root div.factory.front.editing span.input {
   border-bottom: 2px solid #404040;
 }
-div.container div.root>i {
+div.container div.root i {
   position: relative;
-  left: 40px;
 }
 div.container div.root span.label {
   position: relative;
   left: 4px;
+  white-space: nowrap;
   line-height: 60px;
 }
 div.container div.root span.root.label {
@@ -192,6 +212,10 @@ div.container div.root div.factory {
   background: #ccc;
   font-size: 1em;
   color: #505050;
+}
+div.container div.root div.factory div.blk-ctrl {
+  text-align: right;
+  position: relative;
 }
 div.container div.root div.factory span.factory.bounds {
   font-size: 1.2em;

@@ -1,9 +1,10 @@
 extends layout
 
 block content
-
     div(class='container' id="treeContainer")
-        button(class='addRoot yes' id='addRoot') Add root
+        div(class='blk-1 rootBar')
+            button(class='addRoot yes' id='addRoot') Add root
+            span(class='title') Passport Tree
         div(class='genMenu', id='genMenu', style='display: none;', data-id="")
             span(class='genError') Please enter a valid number between 1 and 15
             input(type='text' class="genInput" placeholder="Generation # (1-15)")

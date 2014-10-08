@@ -25182,27 +25182,31 @@ var Factory = React.createClass({displayName: 'Factory',
 	    return (
 	    	React.DOM.div({className: "factory node"}, 
 	    		React.DOM.div({className: "factory front", 'data-id': this.props.id}, 
-	    			React.DOM.i({className: "toggle fa fa-folder-open"}), 
-	    			React.DOM.span({className: "factory label input name"}, this.props.name), 
-	    			React.DOM.span({className: "factory bounds"}, 
-		    			"[", React.DOM.span({'data-id': this.props.id, className: "input bound lowerBound"}, this.props.lower), 
-		    			",", React.DOM.span({'data-id': this.props.id, className: "input bound upperBound"}, this.props.upper), "]"
+	    			React.DOM.div({className: "blk-2"}, 
+		    			React.DOM.i({className: "toggle fa fa-folder-open"}), 
+		    			React.DOM.span({className: "factory label input name"}, this.props.name), 
+	    				React.DOM.span({className: "factory bounds"}, 
+			    			"[", React.DOM.span({'data-id': this.props.id, className: "input bound lowerBound"}, this.props.lower), 
+			    			",", React.DOM.span({'data-id': this.props.id, className: "input bound upperBound"}, this.props.upper), "]"
+		    			)
 	    			), 
-	    			React.DOM.div({className: "factory ctrl"}, 
-						React.DOM.button({'data-id': this.props.id, className: "delete ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-trash"})
-						), 
-						React.DOM.button({className: "edit ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-pencil"})
-						), 
-						React.DOM.button({'data-id': this.props.id, className: "generate ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-play"})
-						), 
-						React.DOM.button({className: "save yes modify", style: {"display": "none"}}, 
-							"Save"
-						), 
-						React.DOM.button({className: "cancel no modify", style: {"display": "none"}}, 
-							"Cancel"
+	    			React.DOM.div({className: "blk-2 blk-ctrl"}, 
+		    			React.DOM.div({className: "factory ctrl"}, 
+							React.DOM.button({'data-id': this.props.id, className: "delete ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-trash"})
+							), 
+							React.DOM.button({className: "edit ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-pencil"})
+							), 
+							React.DOM.button({'data-id': this.props.id, className: "generate ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-play"})
+							), 
+							React.DOM.button({className: "save yes modify", style: {"display": "none"}}, 
+								"Save"
+							), 
+							React.DOM.button({className: "cancel no modify", style: {"display": "none"}}, 
+								"Cancel"
+							)
 						)
 					)
 	    		), 
@@ -25238,23 +25242,27 @@ var Root = React.createClass({displayName: 'Root',
 	    return (
 	    	React.DOM.div({id: this.props.id, className: "root node"}, 
 				React.DOM.div({className: "root front", 'data-id': this.props.id}, 
-					React.DOM.i({className: "toggle fa fa-folder-open"}), 
-					React.DOM.span({className: "root label input name"}, this.props.name), 
-					React.DOM.div({className: "root ctrl"}, 
-						React.DOM.button({'data-id': this.props.id, className: "delete ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-trash"})
-						), 
-						React.DOM.button({className: "edit ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-pencil"})
-						), 
-						React.DOM.button({className: "add ctrl"}, 
-							React.DOM.i({className: "ctrl fa fa-plus"})
-						), 
-						React.DOM.button({className: "save yes modify", style: {"display": "none"}}, 
-							"Save"
-						), 
-						React.DOM.button({className: "cancel no modify", style: {"display": "none"}}, 
-							"Cancel"
+					React.DOM.div({className: "blk-2"}, 
+						React.DOM.i({className: "toggle fa fa-folder-open"}), 
+						React.DOM.span({className: "root label input name"}, this.props.name)
+					), 
+					React.DOM.div({className: "blk-2 blk-ctrl"}, 
+						React.DOM.div({className: "root ctrl"}, 
+							React.DOM.button({'data-id': this.props.id, className: "delete ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-trash"})
+							), 
+							React.DOM.button({className: "edit ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-pencil"})
+							), 
+							React.DOM.button({className: "add ctrl"}, 
+								React.DOM.i({className: "ctrl fa fa-plus"})
+							), 
+							React.DOM.button({className: "save yes modify", style: {"display": "none"}}, 
+								"Save"
+							), 
+							React.DOM.button({className: "cancel no modify", style: {"display": "none"}}, 
+								"Cancel"
+							)
 						)
 					)
 				), 
@@ -25366,22 +25374,22 @@ function bindEvents() {
     /* Since events are dynamically generated, use delegation */
     $(document).on('click', '.ctrl', function(e) {
         var target = $(e.target);
-        if( target.is('button.delete, button.delete > i') )
+        if( target.is('button.delete, button.delete i') )
         {
             //console.log('Delete');
             deleteNode(target.closest('button.delete').attr("data-id"), true);
         }
-        else if( target.is('button.edit, button.edit > i')  )
+        else if( target.is('button.edit, button.edit i')  )
         {
             //console.log('Edit');
             editNode(target.closest('div.front'), false);
         }
-        else if( target.is('button.add, button.add > i')  )
+        else if( target.is('button.add, button.add i')  )
         {
             //console.log('Add');
             addFactory(target.closest('div.front'));
         }
-        else if( target.is('button.generate, button.generate > i')  )
+        else if( target.is('button.generate, button.generate i')  )
         {
             //console.log('Generate');
             var id = target.closest('button').attr('data-id');
@@ -25474,14 +25482,14 @@ function bindEvents() {
         //console.log('Root');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.factoryList');
-        toggleFolder($(this).children('i'));
+        toggleFolder($(this).find('i.toggle'));
     });
 
     $(document).on('click', 'div.factory.front', function(e) {
         //console.log('Factory');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.childList');
-        toggleFolder($(this).children('i'));
+        toggleFolder($(this).find('i.toggle'));
     });
 
     $(document).on('click', 'button#addRoot', function(e) {
@@ -25641,7 +25649,7 @@ function makeEdits(n, save, d, cancel) {
     if(save) {
 
         /* Overwrite current name with new one */
-        node.name = nodeElement.find('span.input.name').html();
+        node.name = nodeElement.find('span.input.name').text();
 
         if(node instanceof Root) {
             /* Nothing else to do here since we're just changing the name */
@@ -25650,8 +25658,8 @@ function makeEdits(n, save, d, cancel) {
             var lower = nodeElement.find('span[data-id=' + id + "].lowerBound");
             var upper = nodeElement.find('span[data-id=' + id + "].upperBound");
 
-            lower = isEmpty(lower) ? "0" : $(lower).html();
-            upper = isEmpty(upper) ? "0" : $(upper).html();
+            lower = isEmpty(lower) ? "0" : $(lower).text();
+            upper = isEmpty(upper) ? "0" : $(upper).text();
 
             node.lower = lower;
             node.upper = upper;

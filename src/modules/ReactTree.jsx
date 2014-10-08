@@ -54,28 +54,32 @@ var Factory = React.createClass({
 	    return (
 	    	<div className="factory node">
 	    		<div className="factory front" data-id={this.props.id}>
-	    			<i className="toggle fa fa-folder-open" />
-	    			<span className="factory label input name">{this.props.name}</span>
-	    			<span className="factory bounds">
-		    			[<span data-id={this.props.id} className="input bound lowerBound">{this.props.lower}</span>
-		    			,<span data-id={this.props.id} className="input bound upperBound">{this.props.upper}</span>]
-	    			</span>
-	    			<div className="factory ctrl">
-						<button data-id={this.props.id} className="delete ctrl">
-							<i className="ctrl fa fa-trash" />
-						</button>
-						<button className="edit ctrl">
-							<i className="ctrl fa fa-pencil" />
-						</button>
-						<button data-id={this.props.id} className="generate ctrl">
-							<i className="ctrl fa fa-play" />
-						</button>
-						<button className="save yes modify" style={{"display": "none"}}>
-							Save
-						</button>
-						<button className="cancel no modify" style={{"display": "none"}}>
-							Cancel
-						</button>
+	    			<div className='blk-2'>
+		    			<i className="toggle fa fa-folder-open" />
+		    			<span className="factory label input name">{this.props.name}</span>
+	    				<span className="factory bounds">
+			    			[<span data-id={this.props.id} className="input bound lowerBound">{this.props.lower}</span>
+			    			,<span data-id={this.props.id} className="input bound upperBound">{this.props.upper}</span>]
+		    			</span>
+	    			</div>
+	    			<div className='blk-2 blk-ctrl'>
+		    			<div className="factory ctrl">
+							<button data-id={this.props.id} className="delete ctrl">
+								<i className="ctrl fa fa-trash" />
+							</button>
+							<button className="edit ctrl">
+								<i className="ctrl fa fa-pencil" />
+							</button>
+							<button data-id={this.props.id} className="generate ctrl">
+								<i className="ctrl fa fa-play" />
+							</button>
+							<button className="save yes modify" style={{"display": "none"}}>
+								Save
+							</button>
+							<button className="cancel no modify" style={{"display": "none"}}>
+								Cancel
+							</button>
+						</div>
 					</div>
 	    		</div>
 	    		<ChildList data={this.props.children} />
@@ -110,24 +114,28 @@ var Root = React.createClass({
 	    return (
 	    	<div id={this.props.id} className="root node">
 				<div className="root front" data-id={this.props.id}>
-					<i className="toggle fa fa-folder-open" />
-					<span className="root label input name">{this.props.name}</span>
-					<div className="root ctrl">
-						<button data-id={this.props.id} className="delete ctrl">
-							<i className="ctrl fa fa-trash" />
-						</button>
-						<button className="edit ctrl">
-							<i className="ctrl fa fa-pencil" />
-						</button>
-						<button className="add ctrl">
-							<i className="ctrl fa fa-plus" />
-						</button>
-						<button className="save yes modify" style={{"display": "none"}}>
-							Save
-						</button>
-						<button className="cancel no modify" style={{"display": "none"}}>
-							Cancel
-						</button>
+					<div className='blk-2'>
+						<i className="toggle fa fa-folder-open" />
+						<span className="root label input name">{this.props.name}</span>
+					</div>
+					<div className='blk-2 blk-ctrl'>
+						<div className="root ctrl">
+							<button data-id={this.props.id} className="delete ctrl">
+								<i className="ctrl fa fa-trash" />
+							</button>
+							<button className="edit ctrl">
+								<i className="ctrl fa fa-pencil" />
+							</button>
+							<button className="add ctrl">
+								<i className="ctrl fa fa-plus" />
+							</button>
+							<button className="save yes modify" style={{"display": "none"}}>
+								Save
+							</button>
+							<button className="cancel no modify" style={{"display": "none"}}>
+								Cancel
+							</button>
+						</div>
 					</div>
 				</div>
 				<FactoryList data={this.props.children} />

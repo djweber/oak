@@ -20,13 +20,9 @@ button.no
         background #B23333
         transition all 0.1s linear
 
-div.container
-
-    max-width 980px
-    min-width 412px
-    padding 0px 40px
-    margin 0px auto
-
+div.rootBar
+    color #909090
+    position relative
     button.addRoot
         width 100px
         height 50px
@@ -36,6 +32,19 @@ div.container
         font-size 1.1em
         margin 20px 0px
         box-shadow 2px 2px 8px #202020
+    span.title
+        color #505050
+        position absolute
+        right 0px
+        line-height 90px
+        display inline-block
+        text-align right
+        font-size 1.4em
+div.container
+    max-width 980px
+    min-width 480px
+    padding 0px 40px
+    margin 0px auto
 
     div.genMenu
         box-sizing border-box
@@ -86,6 +95,16 @@ div.container
         min-height 60px
         background #eee
         color #eee
+
+        div.blk-ctrl
+            text-align right
+            position relative
+        div.blk-bounds
+            text-align center
+            position relative
+
+        i.toggle
+            left 40px
         div.front
             background #1f8fdb
             min-height 60px
@@ -95,10 +114,9 @@ div.container
                 color #404040
                 transition all 0.2s linear
             .factory.ctrl
-                margin-left -40px
+                // margin-left -40px
             .root.ctrl, .factory.ctrl
                 padding 0 15px
-                position absolute
                 right 0
                 background transparent
                 display inline-block
@@ -148,12 +166,13 @@ div.container
         div.root.front.editing span.input,
         div.factory.front.editing span.input
             border-bottom 2px solid #404040
-        &>i
+        & i
             position relative
-            left 40px
+            // left 40px
         span.label
             position relative
             left 4px
+            white-space nowrap
             line-height 60px
         span.root.label
             margin-top 14px
@@ -165,6 +184,9 @@ div.container
             background #ccc
             font-size 1.0em
             color #505050
+            div.blk-ctrl
+                text-align right
+                position relative
             span.factory.bounds
                 font-size 1.2em
                 margin-left 20px
