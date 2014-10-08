@@ -29,6 +29,7 @@ var data = []; /* Our node data */
 var comp = null; /* Main react component */
 var io = require('socket.io-client');
 var socket = null;
+var config = require('./config');
 
 /*****************************************
 
@@ -541,7 +542,7 @@ function isEmpty(el) {
 *****************************************/
 
 function socketSetup() {
-    socket = io("http://localhost:3000");
+    socket = io(config.SOCKET_ADDR);
 
     socket.on("connect", function() {
         //console.log("Socket connection established");

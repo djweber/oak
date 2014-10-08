@@ -25354,6 +25354,7 @@ var data = []; /* Our node data */
 var comp = null; /* Main react component */
 var io = require('socket.io-client');
 var socket = null;
+var config = require('./config');
 
 /*****************************************
 
@@ -25866,7 +25867,7 @@ function isEmpty(el) {
 *****************************************/
 
 function socketSetup() {
-    socket = io("http://localhost:3000");
+    socket = io(config.SOCKET_ADDR);
 
     socket.on("connect", function() {
         //console.log("Socket connection established");
@@ -25913,7 +25914,11 @@ module.exports = function() {
     /* Initialize our React-driven tree */
     comp = React.renderComponent(Tree({data: data}), document.getElementById('tree'));
 };
-},{"./Child":"/Users/david/Desktop/oak/src/modules/Child.js","./Factory":"/Users/david/Desktop/oak/src/modules/Factory.js","./ReactTree.jsx":"/Users/david/Desktop/oak/src/modules/ReactTree.jsx","./Root":"/Users/david/Desktop/oak/src/modules/Root.js","react":"/Users/david/Desktop/oak/node_modules/react/react.js","socket.io-client":"/Users/david/Desktop/oak/node_modules/socket.io-client/index.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
+},{"./Child":"/Users/david/Desktop/oak/src/modules/Child.js","./Factory":"/Users/david/Desktop/oak/src/modules/Factory.js","./ReactTree.jsx":"/Users/david/Desktop/oak/src/modules/ReactTree.jsx","./Root":"/Users/david/Desktop/oak/src/modules/Root.js","./config":"/Users/david/Desktop/oak/src/modules/config.js","react":"/Users/david/Desktop/oak/node_modules/react/react.js","socket.io-client":"/Users/david/Desktop/oak/node_modules/socket.io-client/index.js"}],"/Users/david/Desktop/oak/src/modules/config.js":[function(require,module,exports){
+module.exports = {
+	SOCKET_ADDR: "http://localhost:3000"
+}
+},{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
