@@ -1,3 +1,7 @@
+/* This is our Node model for Mongoose. It encapsulates all
+   possible types of nodes without being split into separate
+   models */
+
 var Mongoose = require('mongoose');
 var Schema = Mongoose.Schema;
 

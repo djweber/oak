@@ -1,3 +1,14 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+	Our factory object. Factories descend from the Node object,
+	and maintain a lower bound and upper bound for generating
+	random numbers, as well as an array of Child nodes that represent
+	the generation result
+*/
+
 var Node = require('./Node');
 var Child = require('./Child');
 

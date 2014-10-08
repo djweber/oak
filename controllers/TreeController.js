@@ -1,3 +1,13 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+	This controller contains a few routines that deserve
+	their own functions. They're in here to modularize the routing
+	code a bit to avoid polluting it
+*/
+
 var Node = require('../models/Node');
 
 module.exports = {

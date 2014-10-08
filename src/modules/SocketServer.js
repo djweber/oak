@@ -1,3 +1,13 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+	These are our basic socket event bindings to process
+	events sent from the client whenever a basic Tree
+	operation is completed
+*/
+
 module.exports = function(io) {
 	io.on('connection', function(socket) {
 		console.log('Connected');

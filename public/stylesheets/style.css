@@ -40,7 +40,8 @@ div.container button.addRoot {
   box-shadow: 2px 2px 8px #202020;
 }
 div.container div.genMenu {
-  width: 235px;
+  box-sizing: border-box;
+  width: 250px;
   position: absolute;
   background: #eee;
   z-index: 999;

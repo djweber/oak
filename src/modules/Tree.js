@@ -1,3 +1,19 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+    This is the main client-side application script
+    for the tree control. It is split into the following
+    sections:
+
+    Private Module Variables
+    UI Events
+    Data Operations
+    UI Methods
+    Sockets/Initialization
+ */
+
 /*****************************************
 
             PRIVATE MODULE VARIABLES
@@ -69,21 +85,21 @@ function bindEvents() {
         }
 
         /* We only want factory bound numbers to be entered, not characters */
-        //if( $(e.target).is('span.input.bound', 'div#genMenu input') ) {
-        var unicode= e.keyCode? e.keyCode : e.charCode;
-        //console.log(unicode);
+        if( $(e.target).is('span.input.bound', 'div#genMenu input') ) {
+            var unicode= e.keyCode? e.keyCode : e.charCode;
+            //console.log(unicode);
 
-        /* Numbers, backspace, and delete are OK */
-        if ( (unicode >= 48 && unicode <= 57)
-            || unicode == 8
-            || unicode == 46
-            || unicode == 37
-            || unicode ==39) {
-            return true;
-        } else {
-            return false;
+            /* Numbers, backspace, and delete are OK */
+            if ( (unicode >= 48 && unicode <= 57)
+                || unicode == 8
+                || unicode == 46
+                || unicode == 37
+                || unicode ==39) {
+                return true;
+            } else {
+                return false;
+            }
         }
-        //}
     });
 
     $(document).on('contextmenu', function(e){
@@ -99,14 +115,6 @@ function bindEvents() {
         }
     });
 
-    function showMenu(top, left, id) {
-        $("#genMenu").attr('data-id', id);
-        $('#genMenu').css({
-            "top": top - 5,
-            "left": left - 5,
-        }).slideDown(100);
-    }
-
     $("#genMenu").on("mouseleave", function(e){
         /* Reset factory id */
         $(this).attr('data-id', '');
@@ -120,12 +128,10 @@ function bindEvents() {
         if(input >= 1 && input <= 15) {
             /* Hide error if present */
             $('span.genError').hide();
-
             /* Generate nodes */
             var id = $('#genMenu').attr('data-id');
             generateNodes(id, input);
-            ("input.genInput").val('');
-            $('#genMenu').hide();
+            hideMenu();
 
         } else {
             /* Show error */
@@ -134,8 +140,7 @@ function bindEvents() {
     });
 
     $("button.genButton.cancel").on("click", function(e) {
-        $("input.genInput").val('');
-        $('#genMenu').hide();
+        hideMenu();
     });
 
     /* UI Toggle Effects */
@@ -295,26 +300,24 @@ function makeEdits(n, save, d) {
     }
 
     if(save) {
-        ////console.log("Da node", nodeElement.html());
 
         /* Overwrite current name with new one */
-        //console.log(nodeElement);
         node.name = nodeElement.find('span.input.name').html();
-        //console.log("New name", node.name);
 
         if(node instanceof Root) {
-            //console.log("is root");
-            //console.log(node);
             /* Nothing else to do here since we're just changing the name */
         } else if(node instanceof Factory) {
-            //console.log("is factory");
             /* Update bounds */
-            node.lower = nodeElement.find('span[data-id=' + id + "].lowerBound").html();
-            node.upper = nodeElement.find('span[data-id=' + id + "].upperBound").html();
-            //console.log("The new bounds:", node.lower, node.upper);
-        } else {
-            //console.log("Unknown node type");
+            var lower = nodeElement.find('span[data-id=' + id + "].lowerBound");
+            var upper = nodeElement.find('span[data-id=' + id + "].upperBound");
 
+            lower = isEmpty(lower) ? "0" : $(lower).html();
+            upper = isEmpty(upper) ? "0" : $(upper).html();
+
+            node.lower = lower;
+            node.upper = upper;
+        } else {
+            console.log("Unknown node type");
         }
 
         /* Save changes to DB */
@@ -332,6 +335,14 @@ function makeEdits(n, save, d) {
     $(n).removeClass('editing');
     $(n).find('span.input').attr('contenteditable', false);
     $(n).children('div.ctrl').removeClass('editing');
+}
+
+function isEmpty(el) {
+    if( $(el).is(':empty') ) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /* Save changes for node */
@@ -422,8 +433,11 @@ function getInitialTreeData() {
             if(data == null || data == undefined) {
                 alert("Error retrieving data");
             } else {
-                //console.log("Done");
-                //console.log(data);
+                if(!data || data.length == 0) {
+                    alert("Our tree is empty! Add some stuff :)");
+                    return;
+                }
+
                 generateTreeFromObjects(data);
             }
         }
@@ -463,8 +477,6 @@ function generateTreeFromObjects(obj) {
             }
         }
     }
-    //console.log("Done");
-    //console.log(tmp);
     data = tmp;
     comp.setState({data: data});
 }
@@ -490,6 +502,20 @@ function toggleFolder(f) {
         $(f).addClass('fa-folder-open');
     }
 }
+
+function showMenu(top, left, id) {
+    $("#genMenu").attr('data-id', id);
+    $('#genMenu').css({
+        "top": top - 5,
+        "left": left - 5,
+    }).slideDown(100);
+}
+
+function hideMenu() {
+    $("input.genInput").val('');
+    $('#genMenu').hide();
+}
+
 
 /*****************************************
 

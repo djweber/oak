@@ -1,3 +1,14 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+	This is the main route file. I tried to make it adhere
+	to as RESTful a style as possible. It contains CRUD
+	operations for nodes, as well a route for node generation
+*/
+
+
 var express = require('express');
 var router = express.Router();
 var Node = require('../models/Node');
@@ -5,10 +16,11 @@ var mongoose = require('mongoose');
 var TreeController = require('../controllers/TreeController');
 
 router.put('/', function(req, res) {
+
 	var io = req.app.get('socket');
  	var tmp = req.param("node");
  	tmp = JSON.parse(tmp);
- 	//console.log(tmp);
+
  	/* Save our new node to the DB */
  	var node = new Node({
  		node_id: tmp.id,
@@ -23,9 +35,9 @@ router.put('/', function(req, res) {
 
  	node.save(function(err, node) {
  		if(err) {
- 			return //console.log(err);
+ 			return
  		}
- 		//console.log("Saved node: ", node);
+
  		res.send(200, "Node saved");
  	});
 
@@ -107,19 +119,15 @@ router.delete('/:id', function(req, res) {
  	Node.findOne({node_id: id}, function(err, result){
  		if(result) {
  			/* Remove its id from any parent nodes */
- 			//console.log("Teh parent", result.parent);
- 			//console.log("Teh node_id", result.node_id);
 			Node.update(
 				{ node_id: result.parent },
 				{ $pull: { "children" : result.node_id }}, function(err, result){
 					//console.log("Edited", result);
 
 				});
- 			//console.log("Deleting", result);
  			/* Recursively delete all of its children from db, if any */
  			TreeController.deleteNode(result);
  			res.send(200, "Deleted node", id);
- 			/* TODO Emit socket event to others */
  		}
  	});
  });
@@ -127,8 +135,7 @@ router.delete('/:id', function(req, res) {
 router.post('/:id', function(req, res) {
 	/* Get node by the node_id */
 	var tmpNode = JSON.parse(req.param('node'));
-	//console.log(tmpNode);
-	//console.log(tmpNode.id);
+
 	if (tmpNode.lower == undefined || tmpNode.lower == null) {
 		tmpNode.lower = 0;
 		tmpNode.upper = 0;
@@ -191,8 +198,6 @@ router.put('/generate', function(req, res){
 
 			 	if(i == children.length - 1 ) {
 			 		res.send(200, "Nodes generated");
- 					/* TODO Emit socket event to others */
-
 			 	}
 			}
 		});

@@ -1,3 +1,12 @@
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+	Our root node object. These are pretty basic, so there
+	isn't too much logic for this one
+*/
+
 var Node = require('./Node');
 
 function Root(name, id) {
@@ -16,10 +25,6 @@ Root.prototype.addChild = function(node) {
 Root.prototype.addFactory = function(f) {
 	/* Add factory to our children array */
 	this.children.push(f);
-}
-
-Root.prototype.delFactory = function(id) {
-	/* Delete factory from our children array */
 }
 
 module.exports = Root;
