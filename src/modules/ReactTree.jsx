@@ -61,10 +61,10 @@ var Factory = React.createClass({
 						<button data-id={this.props.id} className="generate ctrl">
 							<i className="ctrl fa fa-play" />
 						</button>
-						<button className="save modify" style={{"display": "none"}}>
+						<button className="save yes modify" style={{"display": "none"}}>
 							Save
 						</button>
-						<button className="cancel modify" style={{"display": "none"}}>
+						<button className="cancel no modify" style={{"display": "none"}}>
 							Cancel
 						</button>
 					</div>
@@ -113,10 +113,10 @@ var Root = React.createClass({
 						<button className="add ctrl">
 							<i className="ctrl fa fa-plus" />
 						</button>
-						<button className="save modify" style={{"display": "none"}}>
+						<button className="save yes modify" style={{"display": "none"}}>
 							Save
 						</button>
-						<button className="cancel modify" style={{"display": "none"}}>
+						<button className="cancel no modify" style={{"display": "none"}}>
 							Cancel
 						</button>
 					</div>

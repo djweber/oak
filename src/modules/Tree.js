@@ -26,28 +26,30 @@ function bindEvents() {
         var target = $(e.target);
         if( target.is('button.delete, button.delete > i') )
         {
-            console.log('Delete');
+            //console.log('Delete');
             deleteNode(target.closest('button.delete').attr("data-id"), true);
         }
         else if( target.is('button.edit, button.edit > i')  )
         {
-            console.log('Edit');
+            //console.log('Edit');
             editNode(target.closest('div.front'), false);
         }
         else if( target.is('button.add, button.add > i')  )
         {
-            console.log('Add');
+            //console.log('Add');
             addFactory(target.closest('div.front'));
         }
         else if( target.is('button.generate, button.generate > i')  )
         {
-            console.log('Generate');
+            //console.log('Generate');
             var id = target.closest('button').attr('data-id');
-            generateNodes(id, 10, null);
+            var menuWidth = $("#genMenu").css('width');
+            var left = e.pageX - parseInt(menuWidth);
+            showMenu(e.pageY, left, id);
         }
         else if( target.is('button.save') )
         {
-            console.log('Save data');
+            //console.log('Save data');
             makeEdits(target.closest('div.front'), true);
         }
         else if( target.is('button.cancel') )
@@ -58,61 +60,94 @@ function bindEvents() {
         return false;
     });
 
-    $(document).on('keydown', 'span[contenteditable="true"]' ,function(e){
+    $(document).on('keydown', 'span[contenteditable="true"], div#genMenu input' ,function(e){
 
         /* No line breaks */
         if(e.which == 13) {
-            console.log("Key pressed");
+            //console.log("Key pressed");
             return false;
         }
 
         /* We only want factory bound numbers to be entered, not characters */
-        if( $(e.target).is('span.input.bound') ) {
-            var unicode= e.keyCode? e.keyCode : e.charCode;
-            console.log(unicode);
+        //if( $(e.target).is('span.input.bound', 'div#genMenu input') ) {
+        var unicode= e.keyCode? e.keyCode : e.charCode;
+        //console.log(unicode);
 
-            /* Numbers, backspace, and delete are OK */
-            if ( (unicode >= 48 && unicode <= 57) || unicode == 8 || unicode == 46 ) {
-                return true;
-            } else {
-                return false;
-            }
+        /* Numbers, backspace, and delete are OK */
+        if ( (unicode >= 48 && unicode <= 57)
+            || unicode == 8
+            || unicode == 46
+            || unicode == 37
+            || unicode ==39) {
+            return true;
+        } else {
+            return false;
         }
+        //}
     });
 
     $(document).on('contextmenu', function(e){
         e.stopPropagation();
 
         if( $(e.target).is('div.factory.front, div.factory.front *') ) {
-            console.log("Context menu for factory");
-
-            var factoryNode = $(e.target).closest('div.factory.front');
-
+            //console.log("Context menu for factory");
+            var factory = $(e.target).closest('div.factory.front').attr('data-id');
             /* Trick: position of menu is translated (-5, -5) from cursor so that
                the mouseleave event properly triggers (cursor stars in box) */
-            $('#genMenu').css({
-                 "top": e.pageY - 5,
-                "left": e.pageX - 5,
-            }).slideDown(100);
-
+            showMenu(e.pageY, e.pageX, factory);
             return false;
         }
     });
 
+    function showMenu(top, left, id) {
+        $("#genMenu").attr('data-id', id);
+        $('#genMenu').css({
+            "top": top - 5,
+            "left": left - 5,
+        }).slideDown(100);
+    }
+
     $("#genMenu").on("mouseleave", function(e){
-        $(this).toggle();
+        /* Reset factory id */
+        $(this).attr('data-id', '');
+        /* Hide */
+        $(this).hide();
+    });
+
+    $("button.genButton.generate").on("click", function(e) {
+        /* Validate input */
+        var input = $("input.genInput").val();
+        if(input >= 1 && input <= 15) {
+            /* Hide error if present */
+            $('span.genError').hide();
+
+            /* Generate nodes */
+            var id = $('#genMenu').attr('data-id');
+            generateNodes(id, input);
+            ("input.genInput").val('');
+            $('#genMenu').hide();
+
+        } else {
+            /* Show error */
+            $('span.genError').css('display', 'block');
+        }
+    });
+
+    $("button.genButton.cancel").on("click", function(e) {
+        $("input.genInput").val('');
+        $('#genMenu').hide();
     });
 
     /* UI Toggle Effects */
     $(document).on('click', 'div.root.front', function(e) {
-        console.log('Root');
+        //console.log('Root');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.factoryList');
         toggleFolder($(this).children('i'));
     });
 
     $(document).on('click', 'div.factory.front', function(e) {
-        console.log('Factory');
+        //console.log('Factory');
         if( $(this).hasClass('editing') ) return;
         toggleChildren($(this).parent(), 'div.childList');
         toggleFolder($(this).children('i'));
@@ -161,7 +196,7 @@ function getNode(id, theData) {
 function addRoot(r) {
     if(!r) {
         var root = new Root("New root");
-        console.log("New root", root.id);
+        //console.log("New root", root.id);
          /* Save root to our data + DB */
         saveNode(root);
         data.push(root);
@@ -169,7 +204,7 @@ function addRoot(r) {
     } else {
         /* Construct root from data */
         var tmp = JSON.parse(r["node"]);
-        console.log("Tmp", tmp);
+        //console.log("Tmp", tmp);
         var root = new Root(tmp.name, tmp.id);
         data.push(root);
         comp.setState( {data:data} );
@@ -187,14 +222,14 @@ function addFactory(root, f) {
     if(root) {
         id = root.attr("data-id");
     } else {
-        console.log("Root was received instead");
+        //console.log("Root was received instead");
         factory = JSON.parse(f["node"]);
         id = factory.parent;
     }
 
     var result = getNode(id, data);
 
-    console.log("The root", result);
+    //console.log("The root", result);
 
     if( !f ) {
         /* Make new factory node */
@@ -202,12 +237,12 @@ function addFactory(root, f) {
         /* Save factory to DB, and update the parent */
         saveNode(newFactory);
     } else {
-        console.log("The new factory", factory);
+        //console.log("The new factory", factory);
         newFactory = new Factory(factory.parent, factory.lower, factory.upper, factory.name, factory.id);
     }
 
     result[0].addFactory(newFactory);
-    console.log(result[0]);
+    //console.log(result[0]);
     comp.setState({data:data});
 }
 
@@ -249,9 +284,9 @@ function makeEdits(n, save, d) {
 
     if(d) {
         var tmpNode = d["node"]
-        console.log("tmpNode", tmpNode);
+        //console.log("tmpNode", tmpNode);
         var node = getNode(tmpNode.id, data)[0];
-        console.log("Da node");
+        //console.log("Da node");
         node.name = tmpNode.name;
         if(node.type == "factory") {
             node.lower = tmpNode.lower;
@@ -260,25 +295,25 @@ function makeEdits(n, save, d) {
     }
 
     if(save) {
-        //console.log("Da node", nodeElement.html());
+        ////console.log("Da node", nodeElement.html());
 
         /* Overwrite current name with new one */
-        console.log(nodeElement);
+        //console.log(nodeElement);
         node.name = nodeElement.find('span.input.name').html();
-        console.log("New name", node.name);
+        //console.log("New name", node.name);
 
         if(node instanceof Root) {
-            console.log("is root");
-            console.log(node);
+            //console.log("is root");
+            //console.log(node);
             /* Nothing else to do here since we're just changing the name */
         } else if(node instanceof Factory) {
-            console.log("is factory");
+            //console.log("is factory");
             /* Update bounds */
             node.lower = nodeElement.find('span[data-id=' + id + "].lowerBound").html();
             node.upper = nodeElement.find('span[data-id=' + id + "].upperBound").html();
-            console.log("The new bounds:", node.lower, node.upper);
+            //console.log("The new bounds:", node.lower, node.upper);
         } else {
-            console.log("Unknown node type");
+            //console.log("Unknown node type");
 
         }
 
@@ -308,7 +343,7 @@ function saveChanges(n) {
             "node" : JSON.stringify(n)
         },
         success: function(d) {
-            console.log(d);
+            //console.log(d);
             socket.emit("modify", {node: n});
         }
     });
@@ -323,7 +358,7 @@ function generateNodes(f, count, childList) {
         node = childList.data[0].parent;
         node = getNode(node, data)[0];
         node.generate(childList.length, childList);
-        console.log(node.children);
+        //console.log(node.children);
     } else if(childList == null) {
         node = getNode(f, data)[0];
         /* No data provided (not a socket event), save our
@@ -338,7 +373,7 @@ function generateNodes(f, count, childList) {
                 children: children
             },
             success: function(data) {
-                console.log(data);
+                //console.log(data);
                 socket.emit("generate", node.children);
             }
         });
@@ -353,13 +388,13 @@ function deleteNode(id, local) {
     /* Socket event, just delete and set data */
     if(!local) {
         var nodeId = id;
-        console.log("NodeID", id);
+        //console.log("NodeID", id);
         removeNodeFromData(nodeId);
         return;
     }
 
     if( confirm('Are you sure you want to delete this node?') ) {
-        console.log('Deleting node', id);
+        //console.log('Deleting node', id);
 
         /* Remove node from data */
         removeNodeFromData(id);
@@ -372,7 +407,7 @@ function deleteNode(id, local) {
                 id: id
             },
             success: function(data) {
-                console.log(data);
+                //console.log(data);
                 socket.emit("delete", {node: id});
             }
         });
@@ -387,8 +422,8 @@ function getInitialTreeData() {
             if(data == null || data == undefined) {
                 alert("Error retrieving data");
             } else {
-                console.log("Done");
-                console.log(data);
+                //console.log("Done");
+                //console.log(data);
                 generateTreeFromObjects(data);
             }
         }
@@ -428,8 +463,8 @@ function generateTreeFromObjects(obj) {
             }
         }
     }
-    console.log("Done");
-    console.log(tmp);
+    //console.log("Done");
+    //console.log(tmp);
     data = tmp;
     comp.setState({data: data});
 }
@@ -466,31 +501,31 @@ function socketSetup() {
     socket = io("http://localhost:3000");
 
     socket.on("connect", function() {
-        console.log("Socket connection established");
+        //console.log("Socket connection established");
 
         socket.on("addRoot", function(d) {
-            console.log("Add root", d);
+            //console.log("Add root", d);
             addRoot(d["root"]);
         });
 
         socket.on("addFactory", function(d) {
-            console.log("Add factory", d);
+            //console.log("Add factory", d);
             addFactory(null, d["factory"]);
         });
 
         socket.on("modify", function(d) {
-            console.log("Modify", d);
+            //console.log("Modify", d);
             makeEdits(null, false, d["node"]);
         });
 
         socket.on("delete", function(d) {
-            console.log("Delete", d);
+            //console.log("Delete", d);
             var id = d.node.node;
             deleteNode(id, false);
         });
 
         socket.on("generate", function(d) {
-            console.log("Generate", d);
+            //console.log("Generate", d);
             generateNodes(null, null, d);
         });
     });

@@ -4,9 +4,26 @@
 body {
   margin: 0;
   background: #eee;
+  font-family: 'Roboto Slab', serif;
+}
+i {
+  margin-right: 4px;
+}
+button.yes {
+  background: #4bbf62;
+}
+button.yes:hover {
+  background: #3c994e;
+  transition: all 0.1s linear;
+}
+button.no {
+  background: #de4040;
+}
+button.no:hover {
+  background: #b23333;
+  transition: all 0.1s linear;
 }
 div.container {
-  font-family: 'Roboto Slab', serif;
   max-width: 980px;
   min-width: 412px;
   padding: 0px 40px;
@@ -19,29 +36,53 @@ div.container button.addRoot {
   color: #eee;
   font-family: 'Roboto Slab', serif;
   font-size: 1.1em;
-  background: #4bbf62;
   margin: 20px 0px;
   box-shadow: 2px 2px 8px #202020;
 }
 div.container div.genMenu {
+  width: 235px;
   position: absolute;
   background: #eee;
   z-index: 999;
   border: 2px solid #52a2d9;
-  padding: 4px;
+  padding: 5px;
   box-shadow: 2px 2px 8px #202020;
 }
-div.container div.genMenu button.factoryMenu {
-  border: none;
-  background: transparent;
-  font-family: inherit;
+div.container div.genMenu input {
+  display: block;
+}
+div.container div.genMenu button {
+  display: inline-block;
+}
+div.container div.genMenu input[type='text'] {
+  outline: none;
+  height: 45px;
+  width: 200px;
   color: #505050;
-  cursor: pointer;
+  background: #eee;
+  margin: 10px;
+  text-align: center;
+  border: none;
+  border-bottom: 2px dashed #909090;
+  font-family: 'Roboto Slab', serif;
   font-size: 1.2em;
 }
-div.container div.genMenu button.factoryMenu i {
-  color: #4bbf62;
-  margin-right: 4px;
+div.container div.genMenu button.genButton {
+  font-size: 1.2em;
+  padding: 10px;
+  outline: none;
+  margin: 10px;
+  border: none;
+  color: #eee;
+  font-family: 'Roboto Slab', serif;
+}
+div.container div.genMenu span.genError {
+  font-size: 0.8em;
+  width: 200px;
+  text-align: center;
+  word-wrap: break-word;
+  color: #de4040;
+  display: none;
 }
 div.container div#tree {
   cursor: pointer;
@@ -84,8 +125,8 @@ div.container div.root div.front button.ctrl {
   outline: none;
   text-align: center;
   margin: 0 5px;
-  color: #52a2d9;
   background: transparent;
+  color: #52a2d9;
   border: none;
   font-size: 1.8em;
 }
@@ -116,12 +157,6 @@ div.container div.root div.front button.modify {
   font-family: 'Roboto Slab', serif;
   margin: 5px;
   padding: 5px;
-}
-div.container div.root div.front button.modify.save {
-  background: #4bbf62;
-}
-div.container div.root div.front button.modify.cancel {
-  background: #de4040;
 }
 div.container div.root div.front button.modify i {
   margin: 0;
@@ -195,7 +230,4 @@ div.container div.root div.factory div.child span.child.label {
   font-size: 1em;
   margin-left: 90px;
   line-height: 30px;
-}
-i {
-  margin-right: 4px;
 }

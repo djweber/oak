@@ -23,16 +23,16 @@ router.put('/', function(req, res) {
 
  	node.save(function(err, node) {
  		if(err) {
- 			return console.log(err);
+ 			return //console.log(err);
  		}
- 		console.log("Saved node: ", node);
+ 		//console.log("Saved node: ", node);
  		res.send(200, "Node saved");
  	});
 
  	if(tmp.parent != null && tmp.parent != undefined) {
  		/* Add this node to parent's list of children */
  		Node.findOneAndUpdate({node_id: tmp.parent}, { $push: { children: tmp.id }}, function(err) {
- 			console.log("Child added");
+ 			//console.log("Child added");
  		});
  	}
 });
@@ -50,7 +50,7 @@ router.get('/', function(req, res) {
 		if(c == 0){
 			res.send(200, []);
 		}
-		console.log(total);
+		//console.log(total);
 
 		/* First, get all the roots */
 		Node.find( {type: "root"} ).sort({ _id: 'asc' }).exec(function(err, result) {
@@ -78,7 +78,7 @@ router.get('/', function(req, res) {
 
 		src.children.forEach(function(val, index, array) {
 			/* Fetch the actual child from the DB, and replace the key with the object */
-			console.log(val);
+			//console.log(val);
 			Node.findOne({node_id: val}, function(err, result) {
 				if(err) {
 					throw err;
@@ -102,20 +102,20 @@ router.get('/', function(req, res) {
 router.delete('/:id', function(req, res) {
  	/* Find node by ID */
  	var id = req.param('id');
- 	console.log(id);
+ 	//console.log(id);
  	/* We'll want to delete any children if present */
  	Node.findOne({node_id: id}, function(err, result){
  		if(result) {
  			/* Remove its id from any parent nodes */
- 			console.log("Teh parent", result.parent);
- 			console.log("Teh node_id", result.node_id);
+ 			//console.log("Teh parent", result.parent);
+ 			//console.log("Teh node_id", result.node_id);
 			Node.update(
 				{ node_id: result.parent },
 				{ $pull: { "children" : result.node_id }}, function(err, result){
-					console.log("Edited", result);
+					//console.log("Edited", result);
 
 				});
- 			console.log("Deleting", result);
+ 			//console.log("Deleting", result);
  			/* Recursively delete all of its children from db, if any */
  			TreeController.deleteNode(result);
  			res.send(200, "Deleted node", id);
@@ -128,7 +128,7 @@ router.post('/:id', function(req, res) {
 	/* Get node by the node_id */
 	var tmpNode = JSON.parse(req.param('node'));
 	//console.log(tmpNode);
-	console.log(tmpNode.id);
+	//console.log(tmpNode.id);
 	if (tmpNode.lower == undefined || tmpNode.lower == null) {
 		tmpNode.lower = 0;
 		tmpNode.upper = 0;
@@ -141,7 +141,7 @@ router.post('/:id', function(req, res) {
 		}
 	}, function(err, result) {
 		if(err) {
-			console.log(err);
+			//console.log(err);
 			res.send(500, err);
 		};
 
@@ -157,7 +157,7 @@ router.put('/generate', function(req, res){
 	/* Get the list of keys */
 	var keys = [];
 	children.forEach(function(v, i, a){
-		// console.log(v);
+		// //console.log(v);
 		keys.push(v["id"]);
 	});
 
@@ -184,9 +184,9 @@ router.put('/generate', function(req, res){
 
 			 	node.save(function(err, node) {
 			 		if(err) {
-			 			return console.log(err);
+			 			return //console.log(err);
 			 		}
-			 		console.log("Saved node: ", node);
+			 		//console.log("Saved node: ", node);
 			 	});
 
 			 	if(i == children.length - 1 ) {

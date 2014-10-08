@@ -3,12 +3,25 @@
 body
     margin 0
     background #eee
+    font-family 'Roboto Slab', serif
 
+i
+    margin-right 4px
 
+button.yes
+    background #4BBF62
+    &:hover
+        background #3C994E
+        transition all 0.1s linear
+
+button.no
+    background #DE4040
+    &:hover
+        background #B23333
+        transition all 0.1s linear
 
 div.container
 
-    font-family 'Roboto Slab', serif
     max-width 980px
     min-width 412px
     padding 0px 40px
@@ -21,31 +34,49 @@ div.container
         color #eee
         font-family 'Roboto Slab', serif
         font-size 1.1em
-        background #4BBF62
         margin 20px 0px
         box-shadow 2px 2px 8px #202020
 
     div.genMenu
-
+        width 235px
         position absolute
         background #eee
         z-index 999
         border 2px solid #52A2D9
-        padding 4px
+        padding 5px
         box-shadow 2px 2px 8px #202020
 
-        button.factoryMenu
-
-            border none
-            background transparent
-            font-family inherit
+        input
+            display block
+        button
+            display inline-block
+        input[type='text']
+            outline none
+            height 45px
+            width 200px
             color #505050
-            cursor pointer
+            background #eee
+            margin 10px
+            text-align center
+            border none
+            border-bottom 2px dashed #909090
+            font-family 'Roboto Slab', serif
             font-size 1.2em
-            i
-                color #4BBF62
-                margin-right 4px
-
+        button.genButton
+            font-size 1.2em
+            padding 10px
+            outline none
+            margin 10px
+            border none
+            color #eee
+            font-family 'Roboto Slab', serif
+        span.genError
+            font-size 0.8em
+            width 200px
+            text-align center
+            word-wrap break-word
+            color #DE4040
+            display none
     div#tree
         cursor pointer
         box-shadow 2px 2px 8px #202020
@@ -80,8 +111,8 @@ div.container
                 outline none
                 text-align center
                 margin 0 5px
-                color #52A2D9
                 background transparent
+                color #52A2D9
                 border none;
                 font-size 1.8em
             button.delete:hover
@@ -108,10 +139,6 @@ div.container
                 font-family 'Roboto Slab', serif
                 margin 5px
                 padding 5px
-                &.save
-                    background #4BBF62
-                &.cancel
-                    background #DE4040
                 i
                     margin 0
         div.root.front:hover .ctrl, div.root.front.editing .ctrl,
@@ -166,6 +193,3 @@ div.container
                     font-size 1.0em
                     margin-left 90px
                     line-height 30px
-
-i
-    margin-right 4px
