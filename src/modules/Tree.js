@@ -86,10 +86,9 @@ function bindEvents() {
         }
 
         /* We only want factory bound numbers to be entered, not characters */
-        if( $(e.target).is('span.input.bound', 'div#genMenu input') ) {
+        if( $(e.target).is("span.input.bound, div#genMenu input[type='text']") ) {
+            console.log("Press");
             var unicode= e.keyCode? e.keyCode : e.charCode;
-            //console.log(unicode);
-
             /* Numbers, backspace, and delete are OK */
             if ( (unicode >= 48 && unicode <= 57)
                 || unicode == 8
@@ -126,14 +125,13 @@ function bindEvents() {
     $("button.genButton.generate").on("click", function(e) {
         /* Validate input */
         var input = $("input.genInput").val();
-        if(input >= 1 && input <= 15) {
+        if(!isNaN(input) && input >= 1 && input <= 15) {
             /* Hide error if present */
             $('span.genError').hide();
             /* Generate nodes */
             var id = $('#genMenu').attr('data-id');
             generateNodes(id, input);
             hideMenu();
-
         } else {
             /* Show error */
             $('span.genError').css('display', 'block');
@@ -273,22 +271,12 @@ function saveNode(n) {
     });
 }
 
-/* Initiate 'edit' mode for node */
-function editNode(n, isSocketEvent) {
-    $(n).find('button.ctrl').toggle();
-    $(n).find('button.modify').toggle();
-    $(n).addClass('editing');
-    $(n).find('span.input').attr('contenteditable', true);
-    $(n).children('.ctrl').addClass('editing');
-}
-
 /* Handle changes to node */
 function makeEdits(n, save, d, cancel) {
 
     var id = $(n).attr('data-id');
     var node = getNode(id, data)[0];
-
-    console.log(node);
+    var nodeElement = $("[data-id=" + id + "]");
 
     if(cancel) {
         console.log("Canceled");
@@ -299,13 +287,9 @@ function makeEdits(n, save, d, cancel) {
         return;
     }
 
-    var nodeElement = $("[data-id=" + id + "]");
-
     if(d) {
         var tmpNode = d["node"]
-        //console.log("tmpNode", tmpNode);
         var node = getNode(tmpNode.id, data)[0];
-        //console.log("Da node");
         node.name = tmpNode.name;
         if(node.type == "factory") {
             node.lower = tmpNode.lower;
@@ -314,7 +298,6 @@ function makeEdits(n, save, d, cancel) {
     }
 
     if(save) {
-
         /* Overwrite current name with new one */
         node.name = nodeElement.find('span.input.name').text();
 
@@ -325,8 +308,8 @@ function makeEdits(n, save, d, cancel) {
             var lower = nodeElement.find('span[data-id=' + id + "].lowerBound");
             var upper = nodeElement.find('span[data-id=' + id + "].upperBound");
 
-            lower = isEmpty(lower) ? "0" : $(lower).text();
-            upper = isEmpty(upper) ? "0" : $(upper).text();
+            lower = ( isEmpty(lower) || isNaN(lower) ) ? "0" : $(lower).text();
+            upper = ( isEmpty(upper) || isNaN(upper) ) ? "0" : $(upper).text();
 
             node.lower = lower;
             node.upper = upper;
@@ -340,12 +323,6 @@ function makeEdits(n, save, d, cancel) {
     /* Refresh our view */
     comp.setState({data: data});
     exitEdit(n);
-    /* Exit 'edit' mode for node */
-    // $(n).find('button.ctrl').toggle();
-    // $(n).find('button.modify').toggle();
-    // $(n).removeClass('editing');
-    // $(n).find('span.input').attr('contenteditable', false);
-    // $(n).children('div.ctrl').removeClass('editing');
 }
 
 /* Save changes for node */
@@ -525,6 +502,15 @@ function exitEdit(n) {
     $(n).removeClass('editing');
     $(n).find('span.input').attr('contenteditable', false);
     $(n).children('div.ctrl').removeClass('editing');
+}
+
+/* Initiate 'edit' mode for node */
+function editNode(n, isSocketEvent) {
+    $(n).find('button.ctrl').toggle();
+    $(n).find('button.modify').toggle();
+    $(n).addClass('editing');
+    $(n).find('span.input').attr('contenteditable', true);
+    $(n).children('.ctrl').addClass('editing');
 }
 
 function isEmpty(el) {
