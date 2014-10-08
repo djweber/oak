@@ -21,8 +21,11 @@ Factory.prototype.generate = function(count, data) {
 	this.children = [];
 
 	if(data != null) {
-		for(var i = 0; i < data.length; i++) {
-			this.children.push(data[i]);
+		console.log("Generating", data);
+		for(var i = 0; i < data.data.length; i++) {
+			console.log("Making new child");
+			var c = new Child(this.id, data.data[i].value);
+			this.children.push(c);
 		}
 	} else {
 		/* Generate new children and add them to child array */

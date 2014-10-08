@@ -8,25 +8,7 @@ var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
 
+/* Set up socket events */
 var io = socket(server);
-
-io.on('connection', function(socket) {
-	console.log('Connected');
-
-	socket.on('addRoot', function(data) {
-		console.log("Root event received");
-		socket.broadcast.emit('addRoot', {root: data});
-	});
-
-	socket.on('addFactory', function(data) {
-		console.log("Factory event received");
-		socket.broadcast.emit('addFactory', {factory: data});
-	});
-
-	socket.on('modify', function(data) {
-		console.log("Modify event received");
-		socket.broadcast.emit('modify', {node: data});
-	});
-});
-
+require('../src/modules/SocketServer.js')(io);
 app.set('socket', io);

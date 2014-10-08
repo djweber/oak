@@ -25071,8 +25071,11 @@ Factory.prototype.generate = function(count, data) {
 	this.children = [];
 
 	if(data != null) {
-		for(var i = 0; i < data.length; i++) {
-			this.children.push(data[i]);
+		console.log("Generating", data);
+		for(var i = 0; i < data.data.length; i++) {
+			console.log("Making new child");
+			var c = new Child(this.id, data.data[i].value);
+			this.children.push(c);
 		}
 	} else {
 		/* Generate new children and add them to child array */
@@ -25315,7 +25318,7 @@ function bindEvents() {
         if( target.is('button.delete, button.delete > i') )
         {
             console.log('Delete');
-            deleteNode(target.closest('button.delete').attr("data-id"), false);
+            deleteNode(target.closest('button.delete').attr("data-id"), true);
         }
         else if( target.is('button.edit, button.edit > i')  )
         {
@@ -25491,7 +25494,7 @@ function addFactory(root, f) {
         saveNode(newFactory);
     } else {
         console.log("The new factory", factory);
-        newFactory = new Factory(id, factory.lower, factory.upper, factory.name, factory.node_id);
+        newFactory = new Factory(factory.parent, factory.lower, factory.upper, factory.name, factory.id);
     }
 
     result[0].addFactory(newFactory);
@@ -25536,9 +25539,10 @@ function makeEdits(n, save, d) {
     var nodeElement = $("[data-id=" + id + "]");
 
     if(d) {
-        console.log("The D", d);
-        var tmpNode = JSON.parse(d["node"]);
-        var node = getNode(tmpNode.node_id, data)[0];
+        var tmpNode = d["node"]
+        console.log("tmpNode", tmpNode);
+        var node = getNode(tmpNode.id, data)[0];
+        console.log("Da node");
         node.name = tmpNode.name;
         if(node.type == "factory") {
             node.lower = tmpNode.lower;
@@ -25603,12 +25607,16 @@ function saveChanges(n) {
 
 /* Generate nodes for factory */
 function generateNodes(f, count, childList) {
-    var node = getNode(f, data)[0];
+    var node = null;
 
-    if(childList != null && childList.length > 0) {
+    if(childList != null) {
         /* Data provided (socket event), just generate */
-        node.generate(null, childList);
+        node = childList.data[0].parent;
+        node = getNode(node, data)[0];
+        node.generate(childList.length, childList);
+        console.log(node.children);
     } else if(childList == null) {
+        node = getNode(f, data)[0];
         /* No data provided (not a socket event), save our
            new data to server */
         node.generate(count, null);
@@ -25622,6 +25630,7 @@ function generateNodes(f, count, childList) {
             },
             success: function(data) {
                 console.log(data);
+                socket.emit("generate", node.children);
             }
         });
     }
@@ -25630,9 +25639,17 @@ function generateNodes(f, count, childList) {
     comp.setState({data:data});
 }
 
-function deleteNode(id) {
-    if( confirm('Are you sure you want to delete this node?') ) {
+function deleteNode(id, local) {
 
+    /* Socket event, just delete and set data */
+    if(!local) {
+        var nodeId = id;
+        console.log("NodeID", id);
+        removeNodeFromData(nodeId);
+        return;
+    }
+
+    if( confirm('Are you sure you want to delete this node?') ) {
         console.log('Deleting node', id);
 
         /* Remove node from data */
@@ -25647,6 +25664,7 @@ function deleteNode(id) {
             },
             success: function(data) {
                 console.log(data);
+                socket.emit("delete", {node: id});
             }
         });
     }
@@ -25731,7 +25749,7 @@ function toggleFolder(f) {
 
 /*****************************************
 
-           INITIALIZATION
+           SOCKETS/INITIALIZATION
 
 *****************************************/
 
@@ -25756,12 +25774,15 @@ function socketSetup() {
             makeEdits(null, false, d["node"]);
         });
 
-        socket.on("generate", function(d) {
-
+        socket.on("delete", function(d) {
+            console.log("Delete", d);
+            var id = d.node.node;
+            deleteNode(id, false);
         });
 
-        socket.on("delete", function(d) {
-
+        socket.on("generate", function(d) {
+            console.log("Generate", d);
+            generateNodes(null, null, d);
         });
     });
 }
