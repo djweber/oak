@@ -7,11 +7,9 @@ var bodyParser = require('body-parser');
 
 /* DB */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/tree_db');
 
-mongoose.connection.on('connected', function(){
-    console.log("Connected to DB");
-});
+//configure mongoose
+require('./config/mongoose')(mongoose);
 
 var routes = require('./routes/index');
 var users = require('./routes/users');

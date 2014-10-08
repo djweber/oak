@@ -2,6 +2,15 @@
  * @jsx React.DOM
  */
 
+/*
+    Passport Parking Code Test
+    Author: David Weber
+    October 8, 2014
+
+    This our React.js script. It is the crux of the visualization,
+    and generates components from the data passed into and through it.
+ */
+
 var React = require('react');
 
 var Child = React.createClass({

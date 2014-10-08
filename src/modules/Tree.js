@@ -70,7 +70,7 @@ function bindEvents() {
         }
         else if( target.is('button.cancel') )
         {
-            makeEdits(target.closest('div.front'), false);
+            makeEdits(target.closest('div.front'), false, null, true);
         }
 
         return false;
@@ -282,9 +282,22 @@ function editNode(n, isSocketEvent) {
 }
 
 /* Handle changes to node */
-function makeEdits(n, save, d) {
+function makeEdits(n, save, d, cancel) {
+
     var id = $(n).attr('data-id');
     var node = getNode(id, data)[0];
+
+    console.log(node);
+
+    if(cancel) {
+        console.log("Canceled");
+        $(n).find('span.input.name').html(node.name);
+        $(n).find('span.input.lowerBound').html(node.lower);
+        $(n).find('span.input.upperBound').html(node.upper);
+        exitEdit(n);
+        return;
+    }
+
     var nodeElement = $("[data-id=" + id + "]");
 
     if(d) {
@@ -322,27 +335,16 @@ function makeEdits(n, save, d) {
 
         /* Save changes to DB */
         saveChanges(node);
-    } else {
-        /* Revert to original state */
     }
-
     /* Refresh our view */
     comp.setState({data: data});
-
+    exitEdit(n);
     /* Exit 'edit' mode for node */
-    $(n).find('button.ctrl').toggle();
-    $(n).find('button.modify').toggle();
-    $(n).removeClass('editing');
-    $(n).find('span.input').attr('contenteditable', false);
-    $(n).children('div.ctrl').removeClass('editing');
-}
-
-function isEmpty(el) {
-    if( $(el).is(':empty') ) {
-        return true;
-    } else {
-        return false;
-    }
+    // $(n).find('button.ctrl').toggle();
+    // $(n).find('button.modify').toggle();
+    // $(n).removeClass('editing');
+    // $(n).find('span.input').attr('contenteditable', false);
+    // $(n).children('div.ctrl').removeClass('editing');
 }
 
 /* Save changes for node */
@@ -516,6 +518,21 @@ function hideMenu() {
     $('#genMenu').hide();
 }
 
+function exitEdit(n) {
+    $(n).find('button.ctrl').toggle();
+    $(n).find('button.modify').toggle();
+    $(n).removeClass('editing');
+    $(n).find('span.input').attr('contenteditable', false);
+    $(n).children('div.ctrl').removeClass('editing');
+}
+
+function isEmpty(el) {
+    if( $(el).is(':empty') ) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 /*****************************************
 
